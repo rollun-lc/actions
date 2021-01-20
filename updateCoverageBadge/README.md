@@ -22,6 +22,7 @@ Outputs the result of an actions, could be false or true
 
 ## Example usage
 
-uses: actions/hello-world-javascript-action@v1.1
-with:
-  who-to-greet: 'Mona the Octocat'
+- uses: rollun-com/actions/updateCoverageBadge@master
+  with:
+    README: './README.md'
+    coverage-summary: './coverage/coverage-summary.json'
