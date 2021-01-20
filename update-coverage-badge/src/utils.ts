@@ -4,7 +4,7 @@ import {
   Percentage
 }                 from "./types";
 import fs         from "fs";
-import {readFile} from 'fs/promises'
+const {readFile} = require('fs').promises
 
 const replacer         = async (pathToJsonSummary: string, pathToReadme: string) => {
   try {
