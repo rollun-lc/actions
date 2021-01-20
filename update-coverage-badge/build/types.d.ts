@@ -1,10 +1,10 @@
-declare type PossibleBadgeNames = 'Statements' | 'Lines' | 'Functions' | 'Branches';
-declare type PossiblePercentage = number;
+declare type BadgeName = 'Statements' | 'Lines' | 'Functions' | 'Branches';
+declare type Percentage = number;
 declare type CoverageByType = {
-    total: number;
-    covered: number;
-    skipped: number;
-    pct: number;
+    total: Percentage;
+    covered: Percentage;
+    skipped: Percentage;
+    pct: Percentage;
 };
 interface JSONSummary {
     lines: CoverageByType;
@@ -12,4 +12,4 @@ interface JSONSummary {
     functions: CoverageByType;
     branches: CoverageByType;
 }
-export { PossibleBadgeNames, PossiblePercentage, JSONSummary };
+export { BadgeName, Percentage, JSONSummary };

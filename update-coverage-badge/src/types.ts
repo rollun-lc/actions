@@ -1,14 +1,14 @@
-type PossibleBadgeNames =
+type BadgeName =
   'Statements'
   | 'Lines'
   | 'Functions'
   | 'Branches';
-type PossiblePercentage = number;
+type Percentage = number;
 type CoverageByType = {
-  total: number;
-  covered: number;
-  skipped: number;
-  pct: number;
+  total: Percentage;
+  covered: Percentage;
+  skipped: Percentage;
+  pct: Percentage;
 }
 
 interface JSONSummary {
@@ -19,7 +19,7 @@ interface JSONSummary {
 }
 
 export {
-  PossibleBadgeNames,
-  PossiblePercentage,
+  BadgeName,
+  Percentage,
   JSONSummary
 }

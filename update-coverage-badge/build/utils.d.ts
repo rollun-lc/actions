@@ -1,3 +1,2 @@
-import { JSONSummary, PossibleBadgeNames } from "./types";
-declare const replacer: (name: PossibleBadgeNames, total: JSONSummary) => string;
+declare const replacer: (pathToJsonSummary: string, pathToReadme: string) => Promise<void>;
 export { replacer };

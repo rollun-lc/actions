@@ -1,11 +1,11 @@
 name: 'Hello World'
 description: 'Greet someone and record the time'
 inputs:
-  README:
+  readme-path:
     description: 'Path to README file to change'
     required: true
     default: './README.md'
-  coverage-summary:
+  coverage-summary-path:
     description: 'path to file that has coverage summary in it'
     required: true
     default: './coverage/coverage-summary.json'

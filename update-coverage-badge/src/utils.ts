@@ -1,32 +1,39 @@
 import {
   JSONSummary,
-  PossibleBadgeNames,
-  PossiblePercentage
-} from "./types";
+  BadgeName,
+  Percentage
+}                 from "./types";
+import fs         from "fs";
+import {readFile} from 'fs/promises'
 
-const replacer         = (name: PossibleBadgeNames, total: JSONSummary) => getCoverageBadge(name, total);
-const getCoverageBadge = (name: PossibleBadgeNames, total: JSONSummary) => allCoverage(name, total);
-const getBadge         = (value: PossibleBadgeNames, percentage: PossiblePercentage): string => {
-  if (percentage < 70) {
-    return `Coverage%20${value}-${percentage}%25-red.svg`;
-  } else if (percentage < 80) {
-    return `Coverage%20${value}-${percentage}%25-orange.svg`;
-  } else if (percentage < 100) {
-    return `Coverage%20${value}-${percentage}%25-green.svg`;
-  } else {
-    return `Coverage%20${value}-0%25-red.svg`
+const replacer         = async (pathToJsonSummary: string, pathToReadme: string) => {
+  try {
+    const summary = readFile(pathToJsonSummary, 'utf-8');
+    const {total} = JSON.parse(await summary);
+    const readMe  = await readFile(pathToReadme, 'utf-8');
+
+    // if no code coverage badges were found, append new badges to readme file
+    if (!/Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g.test(readMe)) {
+      appendNewBadges(total, pathToReadme);
+      return;
+    }
+
+    fs.writeFileSync(
+      pathToReadme,
+      readMe.replace(/Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g,
+        (match: string, name: BadgeName) => getCoverageBadge(name, total)),
+      'utf-8');
+  } catch (e) {
+    console.log(e);
   }
 }
-const allCoverage      = (name: PossibleBadgeNames, total: JSONSummary) => {
-  const names = {
-    'Statements': getBadge('Statements', total.statements.pct),
-    'Lines':      getBadge('Lines', total.lines.pct),
-    'Functions':  getBadge('Functions', total.functions.pct),
-    'Branches':   getBadge('Branches', total.branches.pct)
-  }
-
-  return names[name];
-}
+const getCoverageBadge = (name: BadgeName, total: JSONSummary): string => allCoverage(name, total);
+const getBadge         = (value: BadgeName, percentage: Percentage): string => `Coverage%20${value}-${percentage}%25-${getBadgeColor(percentage)}.svg`;
+const getBadgeColor    = (percentage: Percentage): string => percentage < 70 ? 'red' : percentage < 80 ? 'orange' : 'green';
+const allCoverage      = (name: BadgeName, total: JSONSummary): string => getBadge(name, total[name.toLowerCase()].pct);
+const badgeTemplate    = (value: BadgeName, percentage: Percentage): string => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
+const createBadges     = (total: JSONSummary): string => Object.keys(total).map(key => badgeTemplate(key as BadgeName, total[key.toLowerCase()].pct)).join('\n');
+const appendNewBadges  = (total: JSONSummary, pathToReadme: string) => fs.appendFileSync(pathToReadme, createBadges(total));
 
 export {
   replacer
