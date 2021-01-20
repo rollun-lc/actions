@@ -1,0 +1,17 @@
+name: 'Hello World'
+description: 'Greet someone and record the time'
+inputs:
+  README:
+    description: 'Path to README file to change'
+    required: true
+    default: './README.md'
+  coverage-summary:
+    description: 'path to file that has coverage summary in it'
+    required: true
+    default: './coverage/coverage-summary.json'
+outputs:
+  result:
+    description: 'Outputs the result of an actions, could be false or true'
+runs:
+  using: 'node12'
+  main: 'index.js'
