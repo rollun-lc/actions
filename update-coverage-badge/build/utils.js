@@ -1,25 +1,15 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.replacer = void 0;
 const fs_1 = __importDefault(require("fs"));
-const promises_1 = require("fs/promises");
-const replacer = (pathToJsonSummary, pathToReadme) => __awaiter(void 0, void 0, void 0, function* () {
+const replacer = (pathToJsonSummary, pathToReadme) => {
     try {
-        const summary = promises_1.readFile(pathToJsonSummary, 'utf-8');
-        const { total } = JSON.parse(yield summary);
-        const readMe = yield promises_1.readFile(pathToReadme, 'utf-8');
+        const summary = fs_1.default.readFileSync(pathToJsonSummary, 'utf-8');
+        const { total } = JSON.parse(summary);
+        const readMe = fs_1.default.readFileSync(pathToReadme, 'utf-8');
         // if no code coverage badges were found, append new badges to readme file
         if (!/Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g.test(readMe)) {
             appendNewBadges(total, pathToReadme);
@@ -30,7 +20,7 @@ const replacer = (pathToJsonSummary, pathToReadme) => __awaiter(void 0, void 0, 
     catch (e) {
         console.log(e);
     }
-});
+};
 exports.replacer = replacer;
 const getCoverageBadge = (name, total) => allCoverage(name, total);
 const getBadge = (value, percentage) => `Coverage%20${value}-${percentage}%25-${getBadgeColor(percentage)}.svg`;

@@ -4,13 +4,12 @@ import {
   Percentage
 }                 from "./types";
 import fs         from "fs";
-const {readFile} = require('fs').promises
 
-const replacer         = async (pathToJsonSummary: string, pathToReadme: string) => {
+const replacer         = (pathToJsonSummary: string, pathToReadme: string) => {
   try {
-    const summary = readFile(pathToJsonSummary, 'utf-8');
-    const {total} = JSON.parse(await summary);
-    const readMe  = await readFile(pathToReadme, 'utf-8');
+    const summary = fs.readFileSync(pathToJsonSummary, 'utf-8');
+    const {total} = JSON.parse(summary);
+    const readMe  = fs.readFileSync(pathToReadme, 'utf-8');
 
     // if no code coverage badges were found, append new badges to readme file
     if (!/Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g.test(readMe)) {

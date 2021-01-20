@@ -1,2 +1,2 @@
-declare const replacer: (pathToJsonSummary: string, pathToReadme: string) => Promise<void>;
+declare const replacer: (pathToJsonSummary: string, pathToReadme: string) => void;
 export { replacer };
