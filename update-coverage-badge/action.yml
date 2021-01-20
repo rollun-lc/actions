@@ -14,4 +14,4 @@ outputs:
     description: 'Outputs the result of an actions, could be false or true'
 runs:
   using: 'node12'
-  main: 'index.js'
+  main: './build/index.js'
