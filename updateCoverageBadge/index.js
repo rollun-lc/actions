@@ -18,9 +18,6 @@ try {
         pathToJsonSummary = DEFAULT_JSON_SUMMARY_PATH;
     }
 
-    const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
-
     const {total}     = JSON.parse(fs.readFileSync(pathToJsonSummary, 'utf-8'));
     const getBadge    = (value, percentage) => {
         if (percentage < 70) {
@@ -47,6 +44,7 @@ try {
     const readMe = fs.readFileSync(pathToReadme, 'utf-8');
 
     fs.writeFileSync(pathToReadme, readMe.replace(/Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g, (match, name) => {
+        console.log(match, getCoverageBadge(name));
         return getCoverageBadge(name);
     }), 'utf-8');
 } catch (error) {
