@@ -28,4 +28,4 @@ const getBadgeColor = (percentage) => percentage < 70 ? 'red' : percentage < 80 
 const allCoverage = (name, total) => getBadge(name, total[name.toLowerCase()].pct);
 const badgeTemplate = (value, percentage) => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
 const createBadges = (total) => Object.keys(total).map(key => badgeTemplate(key, total[key.toLowerCase()].pct)).join('\n');
-const appendNewBadges = (total, pathToReadme) => fs_1.default.appendFileSync(pathToReadme, createBadges(total));
+const appendNewBadges = (total, pathToReadme) => fs_1.default.writeFileSync(pathToReadme, `${createBadges(total)}\n${fs_1.default.readFileSync(pathToReadme)}`);

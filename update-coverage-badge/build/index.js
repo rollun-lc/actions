@@ -26,7 +26,7 @@ const DEFAULT_JSON_SUMMARY_PATH = './coverage/coverage-summary.json';
 try {
     let pathToReadme = core.getInput('readme-path') || DEFAULT_README_PATH;
     let pathToJsonSummary = core.getInput('coverage-summary-path') || DEFAULT_JSON_SUMMARY_PATH;
-    utils_1.replacer(pathToReadme, pathToJsonSummary);
+    utils_1.replacer(pathToJsonSummary, pathToReadme);
 }
 catch (error) {
     core.setFailed(error.message);

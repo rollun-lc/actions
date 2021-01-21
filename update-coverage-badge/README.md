@@ -1,7 +1,7 @@
-# Change badges in README.md file
+# Change badges in README.md file for jest
 
 This action changes file that is in the path of  file, if it has coverage badges in this specific format
-#### ```![Coverage badge](https://img.shields.io/badge/Coverage%20Statements-13.33%25-red.svg)```
+```![Coverage badge](https://img.shields.io/badge/Coverage%20branches-30.73%25-red.svg)```
 Only use with jest
 
 ## Inputs

@@ -8,7 +8,7 @@ try {
   let pathToReadme      = core.getInput('readme-path') || DEFAULT_README_PATH;
   let pathToJsonSummary = core.getInput('coverage-summary-path') || DEFAULT_JSON_SUMMARY_PATH;
 
-  replacer(pathToReadme, pathToJsonSummary);
+  replacer(pathToJsonSummary, pathToReadme);
 } catch (error) {
   core.setFailed(error.message);
 }
