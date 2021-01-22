@@ -20,20 +20,11 @@ jobs:
         run: npm install --prefix update-coverage-badge
 
       - name: build app
-        run: npm run build --prefix update-coverage-badge
+        run: rm -rf ./update-coverage-badge/build && npm run build --prefix update-coverage-badge
 
       - name: Run tests with coverage for update-coverage-badge
         run: |
           cd ./update-coverage-badge
           npm run test:coverage
-
-      - uses: rollun-com/actions/update-coverage-badge@master
-        
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add ./README.md node_modules build
-          git commit -m "generated README.md file"
-          git push
 
 
