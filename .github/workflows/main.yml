@@ -27,4 +27,13 @@ jobs:
           cd ./update-coverage-badge
           npm run test:coverage
 
+      - uses: rollun-com/actions/update-coverage-badge@master
+
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add ./README.md node_modules build
+          git commit -m "generated README.md file"
+          git push
+
 
