@@ -8,7 +8,7 @@
 
 name: Test
 
-on: *
+on: [push, pull_request]
 
 jobs:
   test:
@@ -35,4 +35,5 @@ jobs:
           git add ./README.md node_modules build
           git commit -m "generated README.md file"
           git push
+
 
