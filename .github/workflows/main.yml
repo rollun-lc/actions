@@ -28,6 +28,8 @@ jobs:
           npm run test:coverage
 
       - uses: rollun-com/actions/update-coverage-badge@master
+        readme-path: ./update-coverage-badge/README.md
+        coverage-summary-path: ./update-coverage-badge/coverage/coverage-summary.json
 
       - run: |
           git config user.name github-actions
