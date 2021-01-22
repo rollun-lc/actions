@@ -27,7 +27,7 @@ jobs:
           cd ./update-coverage-badge
           npm run test:coverage
 
-      - uses: ./
+      - uses: rollun-com/actions/update-coverage-badge@master
         
       - run: |
           git config user.name github-actions
