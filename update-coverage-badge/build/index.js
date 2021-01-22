@@ -21,12 +21,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const utils_1 = require("./utils");
-const DEFAULT_README_PATH = './README.md';
-const DEFAULT_JSON_SUMMARY_PATH = './coverage/coverage-summary.json';
 try {
-    let pathToReadme = core.getInput('readme-path') || DEFAULT_README_PATH;
-    let pathToJsonSummary = core.getInput('coverage-summary-path') || DEFAULT_JSON_SUMMARY_PATH;
-    utils_1.replacer(pathToJsonSummary, pathToReadme);
+    utils_1.replacer(core.getInput('coverage-summary-path'), core.getInput('readme-path'));
 }
 catch (error) {
     core.setFailed(error.message);
