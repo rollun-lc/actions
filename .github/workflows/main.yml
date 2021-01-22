@@ -27,6 +27,7 @@ jobs:
           cd ./update-coverage-badge
           npm run test:coverage
 
+
       - uses: ./update-coverage-badge
         readme-path: ./update-coverage-badge/README.md
         coverage-summary-path: ./update-coverage-badge/coverage/coverage-summary.json
