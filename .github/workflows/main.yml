@@ -26,6 +26,7 @@ jobs:
         run: |
           cd ./update-coverage-badge
           npm run test:coverage
+          echo pwd
 
       - uses: ./
         
