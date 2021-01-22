@@ -9,6 +9,7 @@
     "typescript": "^4.1.3"
   },
   "scripts": {
+    "build": "tsc",
     "test": "jest",
     "test:coverage": "jest --coverage --coverageReporters=\"json-summary\" --watchAll=false"
   }
