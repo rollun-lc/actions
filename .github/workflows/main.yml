@@ -31,11 +31,10 @@ jobs:
         readme-path: ./update-coverage-badge/README.md
         coverage-summary-path: ./update-coverage-badge/coverage/coverage-summary.json
 
-
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add ./README.md node_modules build
+          git add ./update-coverage-badge/README.md ./update-coverage-badge/node_modules ./update-coverage-badge/build
           git commit -m "generated README.md file"
           git push
 
