@@ -27,6 +27,8 @@ const replacer = (pathToJsonSummary, pathToReadme) => __awaiter(void 0, void 0, 
         const readMe = fs_1.default.readFileSync(readmePath, 'utf-8');
         const updatedReadme = updateReadme(total, readMe);
         fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
+        console.log(yield git.addConfig('user.name', 'github-actions'));
+        console.log(yield git.addConfig('user.email', 'github-actions@github.com'));
         console.log(yield git.add(pathToReadme));
         console.log(yield git.commit('Updated file with badges'));
         console.log(yield git.push());
