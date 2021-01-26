@@ -19,7 +19,7 @@ Outputs the result of an actions, could be false or true
 
 ## Example usage
 
-```
+```yml
       - name: Run tests with coverage and update README.md
         run: |
           cd react-app
