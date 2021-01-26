@@ -2,9 +2,11 @@ import {
   JSONSummary,
   BadgeName,
   Percentage
-}         from "./types";
-import fs from "fs";
+}                             from "./types";
+import fs                     from "fs";
+import simpleGit, {SimpleGit} from 'simple-git';
 
+const git: SimpleGit            = simpleGit();
 const DEFAULT_README_PATH       = './README.md'
 const DEFAULT_JSON_SUMMARY_PATH = './coverage/coverage-summary.json'
 const BADGE_REGEX               = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g
@@ -20,6 +22,9 @@ const replacer         = (pathToJsonSummary: string, pathToReadme: string) => {
     const updatedReadme = updateReadme(total, readMe);
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
+    git.add(pathToReadme);
+    git.commit('Updated file with badges');
+    console.log(git.push());
   } catch (e) {
     throw new Error(e);
   }
