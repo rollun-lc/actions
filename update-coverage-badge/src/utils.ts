@@ -11,7 +11,7 @@ const DEFAULT_README_PATH       = './README.md'
 const DEFAULT_JSON_SUMMARY_PATH = './coverage/coverage-summary.json'
 const BADGE_REGEX               = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g
 
-const replacer         = async (pathToJsonSummary: string, pathToReadme: string) => {
+const replacer         = async (pathToJsonSummary: string, pathToReadme: string, disableCommit: string) => {
   try {
     const readmePath = pathToReadme || DEFAULT_README_PATH;
 
@@ -22,11 +22,14 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string)
     const updatedReadme = updateReadme(total, readMe);
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
-    console.log(await git.addConfig('user.name', 'github-actions'))
-    console.log(await git.addConfig('user.email', 'github-actions@github.com'))
-    console.log(await git.add(pathToReadme));
-    console.log(await git.commit('Updated file with badges'));
-    console.log(await git.push());
+    console.log(disableCommit);
+    if (disableCommit === 'true') {
+      console.log(await git.addConfig('user.name', 'github-actions'))
+      console.log(await git.addConfig('user.email', 'github-actions@github.com'))
+      console.log(await git.add(pathToReadme));
+      console.log(await git.commit('Updated file with badges'));
+      console.log(await git.push());
+    }
   } catch (e) {
     throw new Error(e);
   }
