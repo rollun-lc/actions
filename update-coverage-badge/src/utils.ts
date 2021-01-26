@@ -26,6 +26,7 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
     if (disableCommit === 'false') {
       console.log(await git.addConfig('user.name', 'github-actions'))
       console.log(await git.addConfig('user.email', 'github-actions@github.com'))
+      console.log(await git.fetch())
       console.log(await git.add(pathToReadme));
       console.log(await git.commit('Updated file with badges'));
       console.log(await git.push());

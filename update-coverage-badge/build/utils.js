@@ -31,6 +31,7 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
         if (disableCommit === 'false') {
             console.log(yield git.addConfig('user.name', 'github-actions'));
             console.log(yield git.addConfig('user.email', 'github-actions@github.com'));
+            console.log(yield git.fetch());
             console.log(yield git.add(pathToReadme));
             console.log(yield git.commit('Updated file with badges'));
             console.log(yield git.push());
