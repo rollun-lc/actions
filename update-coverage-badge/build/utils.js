@@ -28,7 +28,7 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
         const updatedReadme = updateReadme(total, readMe);
         fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
         console.log(disableCommit);
-        if (disableCommit === 'true') {
+        if (disableCommit === 'false') {
             console.log(yield git.addConfig('user.name', 'github-actions'));
             console.log(yield git.addConfig('user.email', 'github-actions@github.com'));
             console.log(yield git.add(pathToReadme));
