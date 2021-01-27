@@ -16,6 +16,7 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
   try {
     const readmePath = pathToReadme || DEFAULT_README_PATH;
     const push       = !!disableCommit;
+    console.log(disableCommit, typeof disableCommit);
 
     const summary = fs.readFileSync(pathToJsonSummary || DEFAULT_JSON_SUMMARY_PATH, 'utf-8');
     const {total} = JSON.parse(summary);
@@ -25,13 +26,13 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
     if (push) {
-      console.log(await git.addConfig('user.name', 'github-actions'))
-      console.log(await git.addConfig('user.email', 'github-actions@github.com'))
-      console.log('git fetch', await git.fetch())
-      console.log('git add', await git.add(pathToReadme));
-      console.log('git commit', await git.commit('Updated file with badges'));
-      console.log('git status', await git.status());
-      console.log('git push', await git.push());
+      await git.addConfig('user.name', 'github-actions')
+      await git.addConfig('user.email', 'github-actions@github.com')
+      await git.fetch()
+      await git.add(pathToReadme)
+      await git.commit('Updated file with badges')
+      await git.status()
+      await git.push()
     }
   } catch (e) {
     throw e;
@@ -50,7 +51,7 @@ const allCoverage      = (name: BadgeName, total: JSONSummary): string => getBad
 const badgeTemplate    = (value: BadgeName, percentage: Percentage): string => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
 const createBadges     = (total: JSONSummary): string => Object.keys(total).map(key => badgeTemplate(key as BadgeName, total[key.toLowerCase()].pct)).join('\n');
 const prependNewBadges = (total: JSONSummary, pathToReadme: string) => `${createBadges(total)}\n${fs.readFileSync(pathToReadme)}`
-const run              = async (exec) => {
+const run              = async (exec: Function) => {
   try {
     await exec();
   } catch (e) {

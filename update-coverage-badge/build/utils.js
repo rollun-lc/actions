@@ -43,19 +43,20 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
     try {
         const readmePath = pathToReadme || DEFAULT_README_PATH;
         const push = !!disableCommit;
+        console.log(disableCommit, typeof disableCommit);
         const summary = fs_1.default.readFileSync(pathToJsonSummary || DEFAULT_JSON_SUMMARY_PATH, 'utf-8');
         const { total } = JSON.parse(summary);
         const readMe = fs_1.default.readFileSync(readmePath, 'utf-8');
         const updatedReadme = updateReadme(total, readMe);
         fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
         if (push) {
-            console.log(yield git.addConfig('user.name', 'github-actions'));
-            console.log(yield git.addConfig('user.email', 'github-actions@github.com'));
-            console.log('git fetch', yield git.fetch());
-            console.log('git add', yield git.add(pathToReadme));
-            console.log('git commit', yield git.commit('Updated file with badges'));
-            console.log('git status', yield git.status());
-            console.log('git push', yield git.push());
+            yield git.addConfig('user.name', 'github-actions');
+            yield git.addConfig('user.email', 'github-actions@github.com');
+            yield git.fetch();
+            yield git.add(pathToReadme);
+            yield git.commit('Updated file with badges');
+            yield git.status();
+            yield git.push();
         }
     }
     catch (e) {

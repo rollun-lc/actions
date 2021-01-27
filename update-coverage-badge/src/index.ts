@@ -6,7 +6,7 @@ import {
 
 
 try {
-  run(replacer(
+  run(async () => replacer(
       core.getInput('coverage-summary-path'),
       core.getInput('readme-path'),
       core.getInput('disable-commit')));
