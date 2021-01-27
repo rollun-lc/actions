@@ -15,6 +15,7 @@ const BADGE_REGEX               = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g
 const replacer         = async (pathToJsonSummary: string, pathToReadme: string, disableCommit: string) => {
   try {
     const readmePath = pathToReadme || DEFAULT_README_PATH;
+    const push       = !!disableCommit;
 
     const summary = fs.readFileSync(pathToJsonSummary || DEFAULT_JSON_SUMMARY_PATH, 'utf-8');
     const {total} = JSON.parse(summary);
@@ -24,12 +25,12 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
     console.log(disableCommit);
-    if (disableCommit === 'false') {
-      exec('git config user.name github-actions');
-      exec('git config user.name github-actions')
-      exec('git add ./README.md')
-      exec('git commit -m "generated README.md file"')
-      exec('git push')
+    if (push) {
+      console.log(exec('git config user.name github-actions'));
+      console.log(exec('git config user.name github-actions'))
+      console.log(exec(`git add ${pathToReadme}`))
+      console.log(exec('git commit -m "generated README.md file"'))
+      console.log(exec('git push'))
       // console.log(await git.addConfig('user.name', 'github-actions'))
       // console.log(await git.addConfig('user.email', 'github-actions@github.com'))
       // console.log(await git.fetch())
