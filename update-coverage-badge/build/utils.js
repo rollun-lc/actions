@@ -34,6 +34,7 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
             console.log(yield git.fetch());
             console.log(yield git.add(pathToReadme));
             console.log(yield git.commit('Updated file with badges'));
+            console.log(yield git.status());
             console.log(yield git.push());
         }
     }

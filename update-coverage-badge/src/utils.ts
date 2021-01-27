@@ -30,11 +30,11 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
       console.log(await git.fetch())
       console.log(await git.add(pathToReadme));
       console.log(await git.commit('Updated file with badges'));
+      console.log(await git.status());
       console.log(await git.push());
     }
   } catch (e) {
     throw e;
-
   }
 }
 // if no code coverage badges were found, append new badges to readme file
