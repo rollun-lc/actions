@@ -5,7 +5,6 @@ import {
 }                             from "./types";
 import fs                     from "fs";
 import simpleGit, {SimpleGit} from 'simple-git';
-import {exec}                 from 'child_process'
 
 const git: SimpleGit            = simpleGit();
 const DEFAULT_README_PATH       = './README.md'
@@ -50,7 +49,15 @@ const allCoverage      = (name: BadgeName, total: JSONSummary): string => getBad
 const badgeTemplate    = (value: BadgeName, percentage: Percentage): string => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
 const createBadges     = (total: JSONSummary): string => Object.keys(total).map(key => badgeTemplate(key as BadgeName, total[key.toLowerCase()].pct)).join('\n');
 const prependNewBadges = (total: JSONSummary, pathToReadme: string) => `${createBadges(total)}\n${fs.readFileSync(pathToReadme)}`
+const run = async (exec) => {
+  try {
+    await exec();
+  } catch (e) {
+    throw e;
+  }
+}
+
 
 export {
-  replacer
+  replacer, run
 }

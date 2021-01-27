@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.replacer = void 0;
+exports.run = exports.replacer = void 0;
 const fs_1 = __importDefault(require("fs"));
 const simple_git_1 = __importDefault(require("simple-git"));
 const git = simple_git_1.default();
@@ -55,3 +55,12 @@ const allCoverage = (name, total) => getBadge(name, total[name.toLowerCase()].pc
 const badgeTemplate = (value, percentage) => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
 const createBadges = (total) => Object.keys(total).map(key => badgeTemplate(key, total[key.toLowerCase()].pct)).join('\n');
 const prependNewBadges = (total, pathToReadme) => `${createBadges(total)}\n${fs_1.default.readFileSync(pathToReadme)}`;
+const run = (exec) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield exec();
+    }
+    catch (e) {
+        throw e;
+    }
+});
+exports.run = run;

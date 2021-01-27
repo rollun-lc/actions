@@ -1,2 +1,3 @@
 declare const replacer: (pathToJsonSummary: string, pathToReadme: string, disableCommit: string) => Promise<void>;
-export { replacer };
+declare const run: (exec: any) => Promise<void>;
+export { replacer, run };
