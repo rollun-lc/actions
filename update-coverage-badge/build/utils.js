@@ -31,11 +31,11 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
         if (push) {
             console.log(yield git.addConfig('user.name', 'github-actions'));
             console.log(yield git.addConfig('user.email', 'github-actions@github.com'));
-            console.log(yield git.fetch());
-            console.log(yield git.add(pathToReadme));
-            console.log(yield git.commit('Updated file with badges'));
-            console.log(yield git.status());
-            console.log(yield git.push());
+            console.log('git fetch', yield git.fetch());
+            console.log('git add', yield git.add(pathToReadme));
+            console.log('git commit', yield git.commit('Updated file with badges'));
+            console.log('git status', yield git.status());
+            console.log('git push', yield git.push());
         }
     }
     catch (e) {

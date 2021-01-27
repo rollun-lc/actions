@@ -27,11 +27,11 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
     if (push) {
       console.log(await git.addConfig('user.name', 'github-actions'))
       console.log(await git.addConfig('user.email', 'github-actions@github.com'))
-      console.log(await git.fetch())
-      console.log(await git.add(pathToReadme));
-      console.log(await git.commit('Updated file with badges'));
-      console.log(await git.status());
-      console.log(await git.push());
+      console.log('git fetch', await git.fetch())
+      console.log('git add', await git.add(pathToReadme));
+      console.log('git commit', await git.commit('Updated file with badges'));
+      console.log('git status', await git.status());
+      console.log('git push', await git.push());
     }
   } catch (e) {
     throw e;
