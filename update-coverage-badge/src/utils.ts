@@ -24,22 +24,17 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
     const updatedReadme = updateReadme(total, readMe);
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
-    console.log(disableCommit);
     if (push) {
-      console.log(exec('git config user.name github-actions'));
-      console.log(exec('git config user.name github-actions'))
-      console.log(exec(`git add ${pathToReadme}`))
-      console.log(exec('git commit -m "generated README.md file"'))
-      console.log(exec('git push'))
-      // console.log(await git.addConfig('user.name', 'github-actions'))
-      // console.log(await git.addConfig('user.email', 'github-actions@github.com'))
-      // console.log(await git.fetch())
-      // console.log(await git.add(pathToReadme));
-      // console.log(await git.commit('Updated file with badges'));
-      // console.log(await git.push());
+      console.log(await git.addConfig('user.name', 'github-actions'))
+      console.log(await git.addConfig('user.email', 'github-actions@github.com'))
+      console.log(await git.fetch())
+      console.log(await git.add(pathToReadme));
+      console.log(await git.commit('Updated file with badges'));
+      console.log(await git.push());
     }
   } catch (e) {
-    throw new Error(e);
+    throw e;
+
   }
 }
 // if no code coverage badges were found, append new badges to readme file
