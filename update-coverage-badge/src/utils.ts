@@ -12,12 +12,11 @@ const BADGE_REGEX               = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g
 
 const replacer         = async (pathToJsonSummary: string, pathToReadme: string, disableCommit: string) => {
   try {
-    const readmePath = pathToReadme;
     const toBePushed = disableCommit !== 'false'
 
     const summary = fs.readFileSync(pathToJsonSummary,'utf-8');
     const {total} = JSON.parse(summary);
-    const readMe  = fs.readFileSync(readmePath, 'utf-8');
+    const readMe  = fs.readFileSync(pathToReadme, 'utf-8');
 
     const updatedReadme = updateReadme(total, readMe);
 

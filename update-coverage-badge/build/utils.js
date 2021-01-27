@@ -39,11 +39,10 @@ const git = simple_git_1.default();
 const BADGE_REGEX = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g;
 const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const readmePath = pathToReadme;
         const toBePushed = disableCommit !== 'false';
         const summary = fs_1.default.readFileSync(pathToJsonSummary, 'utf-8');
         const { total } = JSON.parse(summary);
-        const readMe = fs_1.default.readFileSync(readmePath, 'utf-8');
+        const readMe = fs_1.default.readFileSync(pathToReadme, 'utf-8');
         const updatedReadme = updateReadme(total, readMe);
         fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
         if (toBePushed) {
