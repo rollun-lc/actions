@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.replacer = void 0;
 const fs_1 = __importDefault(require("fs"));
 const simple_git_1 = __importDefault(require("simple-git"));
+const child_process_1 = require("child_process");
 const git = simple_git_1.default();
 const DEFAULT_README_PATH = './README.md';
 const DEFAULT_JSON_SUMMARY_PATH = './coverage/coverage-summary.json';
@@ -29,12 +30,17 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
         fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
         console.log(disableCommit);
         if (disableCommit === 'false') {
-            console.log(yield git.addConfig('user.name', 'github-actions'));
-            console.log(yield git.addConfig('user.email', 'github-actions@github.com'));
-            console.log(yield git.fetch());
-            console.log(yield git.add(pathToReadme));
-            console.log(yield git.commit('Updated file with badges'));
-            console.log(yield git.push());
+            child_process_1.exec('git config user.name github-actions');
+            child_process_1.exec('git config user.name github-actions');
+            child_process_1.exec('git add ./README.md');
+            child_process_1.exec('git commit -m "generated README.md file"');
+            child_process_1.exec('git push');
+            // console.log(await git.addConfig('user.name', 'github-actions'))
+            // console.log(await git.addConfig('user.email', 'github-actions@github.com'))
+            // console.log(await git.fetch())
+            // console.log(await git.add(pathToReadme));
+            // console.log(await git.commit('Updated file with badges'));
+            // console.log(await git.push());
         }
     }
     catch (e) {
