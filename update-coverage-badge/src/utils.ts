@@ -8,24 +8,21 @@ import simpleGit, {SimpleGit} from 'simple-git';
 import * as core              from '@actions/core'
 
 const git: SimpleGit            = simpleGit();
-const DEFAULT_README_PATH       = './README.md'
-const DEFAULT_JSON_SUMMARY_PATH = './coverage/coverage-summary.json'
 const BADGE_REGEX               = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g
 
 const replacer         = async (pathToJsonSummary: string, pathToReadme: string, disableCommit: string) => {
   try {
-    const readmePath = pathToReadme || DEFAULT_README_PATH;
-    const push       = !!disableCommit;
-    console.log(disableCommit, typeof disableCommit);
+    const readmePath = pathToReadme;
+    const toBePushed = disableCommit !== 'false'
 
-    const summary = fs.readFileSync(pathToJsonSummary || DEFAULT_JSON_SUMMARY_PATH, 'utf-8');
+    const summary = fs.readFileSync(pathToJsonSummary,'utf-8');
     const {total} = JSON.parse(summary);
     const readMe  = fs.readFileSync(readmePath, 'utf-8');
 
     const updatedReadme = updateReadme(total, readMe);
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
-    if (push) {
+    if (toBePushed) {
       await git.addConfig('user.name', 'github-actions')
       await git.addConfig('user.email', 'github-actions@github.com')
       await git.fetch()
