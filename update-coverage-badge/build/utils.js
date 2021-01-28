@@ -65,14 +65,6 @@ exports.replacer = replacer;
 const updateReadme = (total, readMe) => !BADGE_REGEX.test(readMe) ?
     prependNewBadges(total, readMe) :
     replaceOldBadges(total, readMe);
-const replaceOldBadges = (total, readMe) => readMe.replace(BADGE_REGEX, (match, name) => getCoverageBadge(name, total));
-const getCoverageBadge = (name, total) => allCoverage(name, total);
-const getBadge = (value, percentage) => `Coverage%20${value}-${percentage}%25-${getBadgeColor(percentage)}.svg`;
-const getBadgeColor = (percentage) => percentage < 70 ? 'red' : (percentage < 80 ? 'orange' : 'green');
-const allCoverage = (name, total) => getBadge(name, total[name.toLowerCase()].pct);
-const badgeTemplate = (value, percentage) => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
-const createBadges = (total) => Object.keys(total).map(key => badgeTemplate(key, total[key.toLowerCase()].pct)).join('\n');
-const prependNewBadges = (total, pathToReadme) => `${createBadges(total)}\n${fs_1.default.readFileSync(pathToReadme)}`;
 const run = (exec) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield exec();
@@ -82,3 +74,9 @@ const run = (exec) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.run = run;
+const prependNewBadges = (total, pathToReadme) => `${createBadges(total)}\n${fs_1.default.readFileSync(pathToReadme)}`;
+const replaceOldBadges = (total, readMe) => readMe.replace(BADGE_REGEX, (match, name) => getBadge(name, total[name.toLowerCase()].pct));
+const createBadges = (total) => Object.keys(total).map(key => badgeTemplate(key, total[key.toLowerCase()].pct)).join('\n');
+const badgeTemplate = (value, percentage) => `![Coverage badge](https://img.shields.io/badge/${getBadge(value, percentage)})`;
+const getBadge = (value, percentage) => `Coverage%20${value}-${percentage}%25-${getBadgeColor(percentage)}.svg`;
+const getBadgeColor = (percentage) => percentage < 70 ? 'red' : (percentage < 80 ? 'orange' : 'green');
