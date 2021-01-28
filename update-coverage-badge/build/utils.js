@@ -46,6 +46,7 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
         const updatedReadme = updateReadme(total, readMe);
         fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
         if (toBePushed) {
+            throw new Error('test');
             yield git.addConfig('user.name', 'github-actions');
             yield git.addConfig('user.email', 'github-actions@github.com');
             yield git.fetch();

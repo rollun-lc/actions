@@ -22,6 +22,7 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
 
     fs.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
     if (toBePushed) {
+      throw new Error('test');
       await git.addConfig('user.name', 'github-actions')
       await git.addConfig('user.email', 'github-actions@github.com')
       await git.fetch()
