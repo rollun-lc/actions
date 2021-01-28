@@ -7,9 +7,9 @@ import {
 
 try {
   run(async () => replacer(
-      core.getInput('coverage-summary-path'),
-      core.getInput('readme-path'),
-      core.getInput('disable-commit')));
+    core.getInput('coverage-summary-path'),
+    core.getInput('readme-path'),
+    core.getInput('disable-commit')))
 } catch (error) {
   core.setFailed(error.message);
 }

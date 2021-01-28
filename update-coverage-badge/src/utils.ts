@@ -12,7 +12,7 @@ const BADGE_REGEX               = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g
 
 const replacer         = async (pathToJsonSummary: string, pathToReadme: string, disableCommit: string) => {
   try {
-    const toBePushed = disableCommit !== 'false'
+    const toBePushed = disableCommit === 'false'
 
     const summary = fs.readFileSync(pathToJsonSummary,'utf-8');
     const {total} = JSON.parse(summary);
@@ -29,7 +29,8 @@ const replacer         = async (pathToJsonSummary: string, pathToReadme: string,
       await git.add(pathToReadme)
       await git.commit('Updated file with badges')
       await git.status()
-      await git.push()
+      await git.push();
+      console.log('pushed');
     }
   } catch (e) {
     throw e;

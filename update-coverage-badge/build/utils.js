@@ -39,7 +39,7 @@ const git = simple_git_1.default();
 const BADGE_REGEX = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g;
 const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const toBePushed = disableCommit !== 'false';
+        const toBePushed = disableCommit === 'false';
         const summary = fs_1.default.readFileSync(pathToJsonSummary, 'utf-8');
         const { total } = JSON.parse(summary);
         const readMe = fs_1.default.readFileSync(pathToReadme, 'utf-8');
@@ -54,6 +54,7 @@ const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(v
             yield git.commit('Updated file with badges');
             yield git.status();
             yield git.push();
+            console.log('pushed');
         }
     }
     catch (e) {
