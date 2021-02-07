@@ -6,7 +6,7 @@ import {
 import {context} from '@actions/github'
 
 const runAction = () => {
-  if (context.ref === 'refs/heads/master' || context.ref === 'refs/heads/main') {
+  if (context.ref !== 'refs/heads/master' && context.ref !== 'refs/heads/main') {
     console.log('This actions only runs on master and main branches');
     return
   }
