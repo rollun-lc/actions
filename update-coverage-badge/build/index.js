@@ -33,7 +33,7 @@ const utils_1 = require("./utils");
 const github_1 = require("@actions/github");
 const runAction = () => {
     // @ts-ignore
-    console.log(github_1.context.repo, github_1.context.repository);
+    console.log(github_1.context);
     // @ts-ignore
     if (github_1.context.ref !== github_1.context.repository.default_branch) {
         console.log('This actions only runs on master and main branches');
