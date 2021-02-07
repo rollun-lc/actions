@@ -3,9 +3,12 @@ import {
   replacer,
   run
 }                from "./utils";
+import {context} from '@actions/github'
 
 
 try {
+  console.log(context.payload.pull_request);
+
   run(async () => replacer(
     core.getInput('coverage-summary-path'),
     core.getInput('readme-path'),

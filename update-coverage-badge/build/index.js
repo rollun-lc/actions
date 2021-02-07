@@ -30,7 +30,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
 const utils_1 = require("./utils");
+const github_1 = require("@actions/github");
 try {
+    console.log(github_1.context.payload.pull_request);
     utils_1.run(() => __awaiter(void 0, void 0, void 0, function* () {
         return utils_1.replacer(core.getInput('coverage-summary-path'), core.getInput('readme-path'), core.getInput('disable-commit'));
     }));
