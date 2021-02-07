@@ -33,8 +33,8 @@ const utils_1 = require("./utils");
 const github_1 = require("@actions/github");
 const runAction = () => {
     var _a, _b;
-    console.log((_a = github_1.context.payload.repository) === null || _a === void 0 ? void 0 : _a.default_branch);
-    if (github_1.context.ref !== ((_b = github_1.context.payload.repository) === null || _b === void 0 ? void 0 : _b.default_branch)) {
+    console.log((_a = github_1.context.payload.repository) === null || _a === void 0 ? void 0 : _a.default_branch, github_1.context);
+    if (!github_1.context.ref.includes((_b = github_1.context.payload.repository) === null || _b === void 0 ? void 0 : _b.default_branch)) {
         console.log('This actions only runs on master and main branches');
         return;
     }
