@@ -7,7 +7,7 @@ import {context} from '@actions/github'
 
 
 try {
-  console.log(context.payload.pull_request);
+  console.log(context);
 
   run(async () => replacer(
     core.getInput('coverage-summary-path'),
