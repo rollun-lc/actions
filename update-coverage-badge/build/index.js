@@ -32,6 +32,7 @@ const core = __importStar(require("@actions/core"));
 const utils_1 = require("./utils");
 const github_1 = require("@actions/github");
 const runAction = () => {
+    console.log(github_1.context);
     if (github_1.context.ref !== 'refs/heads/master' && github_1.context.ref !== 'refs/heads/main') {
         console.log('This actions only runs on master and main branches');
         return;
