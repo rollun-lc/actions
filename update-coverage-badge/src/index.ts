@@ -6,8 +6,10 @@ import {
 import {context} from '@actions/github'
 
 const runAction = () => {
-  console.log(context);
-  if (context.ref !== 'refs/heads/master' && context.ref !== 'refs/heads/main') {
+  // @ts-ignore
+  console.log(context.repo, context.repository);
+  // @ts-ignore
+  if (context.ref !== context.repository.default_branch) {
     console.log('This actions only runs on master and main branches');
     return
   }
