@@ -3,7 +3,7 @@ name: Build update coverage badge
 on:
   push:
     paths:
-      - 'update-coverage-badge/*'
+      - './update-coverage-badge/**'
     branches:
       - master
 
