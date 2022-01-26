@@ -3,7 +3,7 @@ name: Build update d2c service
 on:
   push:
     paths:
-      - ./update-d2c-service
+      - 'update-d2c-service/**'
     branches:
       - master
 
