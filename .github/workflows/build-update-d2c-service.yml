@@ -22,11 +22,3 @@ jobs:
 
       - name: build app
         run: rm -rf ./update-d2c-service/build && npm run build --prefix update-d2c-service
-
-      - name: push build folder to git
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add ./update-d2c-service/build ./update-d2c-service/node_modules ./update-d2c-service/package-lock.json
-          git commit -m "Added build and node_modules folder to update-d2c-service action"
-          git push
