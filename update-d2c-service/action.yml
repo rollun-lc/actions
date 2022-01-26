@@ -1,0 +1,29 @@
+name: 'Update d2c service'
+description: 'This action updates service in d2c'
+inputs:
+  service-name:
+    description: 'Name of service in d2c'
+    required: true
+  d2c-email:
+    description: 'Email of d2c account'
+    required: true
+  d2c-password:
+    description: 'Password of d2c account'
+    required: true
+  actions:
+    description: |
+      List of actions, in string separated by commas with no spaces,
+      example: [restart,updateLocalDeps], that can be added to update webhook.
+      Available options: restart,updateSources,updateLocalDeps,updateGlobalDeps,updateVersion
+    required: false
+    default: 'updateSources,updateLocalDeps,updateGlobalDeps,updateVersion'
+
+outputs:
+  result:
+    description: 'Outputs the result of an actions, could be false or true'
+
+runs:
+  using: 'node16'
+  main: 'build/index.js'
+
+

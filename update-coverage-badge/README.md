@@ -27,7 +27,7 @@ Outputs the result of an actions, could be false or true
           npm run test:coverage
           cd ../
 
-      - uses: rollun-com/actions/updateCoverageBadge@master
+      - uses: rollun-com/actions/update-coverage-cadge@master
         with:
           readme-path: './README.md'
           coverage-summary-path: './react-app/coverage/coverage-summary.json'
