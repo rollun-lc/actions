@@ -14,6 +14,9 @@ jobs:
       - name: Instal dependencies
         run: npm install --prefix update-coverage-badge
 
+      - name: Run tests
+        run: npm run test --prefix update-coverage-badge
+
       - name: build app
         run: rm -rf ./update-coverage-badge/build && npm run build --prefix update-coverage-badge
 

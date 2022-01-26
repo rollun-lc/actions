@@ -1,7 +1,7 @@
-import {replacer} from "../src/utils";
-import * as fs    from "fs";
+import { replacer } from '../src/utils';
+import { readFile, writeFile, unlink } from 'fs/promises';
 
-const readme         = `
+const readme = `
 ![Coverage badge](https://img.shields.io/badge/Coverage%20Statements-0%25-red.svg)
 ![Coverage badge](https://img.shields.io/badge/Coverage%20Lines-14%25-red.svg)
 ![Coverage badge](https://img.shields.io/badge/Coverage%20Functions-88%25-red.svg)
@@ -13,7 +13,7 @@ const expectedReadme = `
 ![Coverage badge](https://img.shields.io/badge/Coverage%20Functions-11.88%25-red.svg)
 ![Coverage badge](https://img.shields.io/badge/Coverage%20Branches-11.87%25-red.svg)
 `;
-const jsonSummary    = `
+const jsonSummary = `
 {
   "total": {
     "lines": {
@@ -47,25 +47,34 @@ const jsonSummary    = `
 describe('replacer', () => {
   describe('replacer without files', () => {
     test('handle empty string input', () => {
-      expect(() => replacer('', '')).toThrowError();
-    })
-  })
+      const replacerWithEmptyStringArguments = async () => {
+        await replacer('', '', 'true');
+      };
+
+      expect(replacerWithEmptyStringArguments).rejects.toThrowError(
+        new Error(
+          'Invalid arguments. Either [pathToReadme] or [pathToJsonSummary] is empty',
+        ),
+      );
+    });
+  });
 
   describe('replacer with files', () => {
-    beforeAll(() => {
-      fs.writeFileSync('./README1.md', readme);
-      fs.writeFileSync('./coverage-summary.json', jsonSummary);
-    })
+    beforeAll(async () => {
+      await writeFile('./README1.md', readme);
+      await writeFile('./coverage-summary.json', jsonSummary);
+    });
 
-    afterAll(() => {
-      fs.unlinkSync('./README1.md');
-      fs.unlinkSync('./coverage-summary.json');
-    })
+    afterAll(async () => {
+      await unlink('./README1.md');
+      await unlink('./coverage-summary.json');
+    });
 
-    test('test if changes file', () => {
-      replacer('./coverage-summary.json', './README1.md');
-      expect(fs.readFileSync('./README1.md', 'utf-8')).toEqual(expectedReadme);
-    })
-  })
+    test('test if changes file', async () => {
+      await replacer('./coverage-summary.json', './README1.md', 'true');
+      const replacedBadges = await readFile('./README1.md', 'utf-8');
 
-})
+      expect(replacedBadges).toEqual(expectedReadme);
+    });
+  });
+});
