@@ -32,39 +32,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = exports.replacer = void 0;
-const fs_1 = __importDefault(require("fs"));
+const promises_1 = require("fs/promises");
 const simple_git_1 = __importDefault(require("simple-git"));
 const core = __importStar(require("@actions/core"));
 const git = simple_git_1.default();
 const BADGE_REGEX = /Coverage%20(.+)\-([.0-9]+)%25-(.+)\.svg/g;
 const replacer = (pathToJsonSummary, pathToReadme, disableCommit) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const toBePushed = disableCommit === 'false';
-        const summary = fs_1.default.readFileSync(pathToJsonSummary, 'utf-8');
-        const { total } = JSON.parse(summary);
-        const readMe = fs_1.default.readFileSync(pathToReadme, 'utf-8');
-        const updatedReadme = updateReadme(total, readMe);
-        fs_1.default.writeFileSync(pathToReadme, updatedReadme, 'utf-8');
-        if (toBePushed) {
-            yield git.addConfig('user.name', 'github-actions');
-            yield git.addConfig('user.email', 'github-actions@github.com');
-            yield git.fetch();
-            yield git.add(pathToReadme);
-            yield git.commit('Updated file with badges');
-            yield git.status();
-            yield git.push();
-            console.log('pushed');
-        }
+    if (!pathToJsonSummary || !pathToReadme) {
+        throw new Error('Invalid arguments. Either [pathToReadme] or [pathToJsonSummary] is empty');
     }
-    catch (e) {
-        throw e;
+    const toBePushed = disableCommit === 'false';
+    const summary = yield promises_1.readFile(pathToJsonSummary, 'utf-8');
+    const { total } = JSON.parse(summary);
+    const readMe = yield promises_1.readFile(pathToReadme, 'utf-8');
+    const updatedReadme = yield updateReadme(total, readMe);
+    yield promises_1.writeFile(pathToReadme, updatedReadme, 'utf-8');
+    if (toBePushed) {
+        yield git.addConfig('user.name', 'github-actions');
+        yield git.addConfig('user.email', 'github-actions@github.com');
+        yield git.fetch();
+        yield git.add(pathToReadme);
+        yield git.commit('Updated file with badges');
+        yield git.status();
+        yield git.push();
+        console.log('pushed');
     }
 });
 exports.replacer = replacer;
 // if no code coverage badges were found, append new badges to readme file
-const updateReadme = (total, readMe) => !BADGE_REGEX.test(readMe)
-    ? prependNewBadges(total, readMe)
-    : replaceOldBadges(total, readMe);
+const updateReadme = (total, readMe) => __awaiter(void 0, void 0, void 0, function* () {
+    return !BADGE_REGEX.test(readMe)
+        ? yield prependNewBadges(total, readMe)
+        : replaceOldBadges(total, readMe);
+});
 const run = (exec) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield exec();
@@ -74,7 +74,7 @@ const run = (exec) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.run = run;
-const prependNewBadges = (total, pathToReadme) => `${createBadges(total)}\n${fs_1.default.readFileSync(pathToReadme)}`;
+const prependNewBadges = (total, pathToReadme) => __awaiter(void 0, void 0, void 0, function* () { return `${createBadges(total)}\n${yield promises_1.readFile(pathToReadme)}`; });
 const replaceOldBadges = (total, readMe) => readMe.replace(BADGE_REGEX, (match, name) => getBadge(name, total[name.toLowerCase()].pct));
 const createBadges = (total) => Object.keys(total)
     .map((key) => badgeTemplate(key, total[key.toLowerCase()].pct))
