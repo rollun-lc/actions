@@ -2,6 +2,8 @@ name: Build update coverage badge
 
 on:
   push:
+    paths:
+      - ./update-coverage-badge
     branches:
       - master
 
