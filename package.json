@@ -1,0 +1,29 @@
+{
+  "name": "actions",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "7.2.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2"
+  },
+  "scripts": {
+    "format": "prettier --write */**/*.ts",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings 0",
+    "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --max-warnings 0 --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rollun-com/actions.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rollun-com/actions/issues"
+  },
+  "homepage": "https://github.com/rollun-com/actions#readme"
+}
