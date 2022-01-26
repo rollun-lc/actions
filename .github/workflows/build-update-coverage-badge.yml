@@ -1,0 +1,26 @@
+name: Build update coverage badge
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+
+      - name: Instal dependencies
+        run: npm install --prefix update-coverage-badge
+
+      - name: build app
+        run: rm -rf ./update-coverage-badge/build && npm run build --prefix update-coverage-badge
+
+      - name: push build folder to git
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add ./update-coverage-badge/build
+          git commit -m "Added build folder to update-coverage-badge action"
+          git push
