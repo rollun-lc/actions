@@ -23,7 +23,6 @@ Outputs update service webhook
       - uses: rollun-com/actions/update-d2c-service@master
         with:
           service-name: tr-parser
-          d2c-email: test@email.com
-          d2c-password: somepassowrd
-          actions: restart,updateSources,updateLocalDeps,updateGlobalDeps,updateVersion
+          d2c-email: ${{ secrets.D2C_USER }}
+          d2c-password: ${{ secrets.D2C_PASSWORD }}
 ```
