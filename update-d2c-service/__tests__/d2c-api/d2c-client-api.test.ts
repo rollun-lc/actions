@@ -10,7 +10,7 @@ describe('Test d2c-api/d2c-client-api module', () => {
     const serviceId = 'testIdService';
     const hookId = 'testIdHook';
 
-    const setupClientTest = () => {
+    const setupClientTest = async () => {
       nock(D2cApiClient.baseUrl)
         .post('/login')
         .reply(200, { member: { token: 'test' } });
@@ -19,15 +19,16 @@ describe('Test d2c-api/d2c-client-api module', () => {
         .reply(200, {
           result: { services: [{ name: serviceName, id: serviceId }] },
         });
+
+      return createD2cApiWithAuth('test', 'test1');
     };
 
     test('if throws error that service does not exist', async () => {
-      setupClientTest();
-      const client = await createD2cApiWithAuth('test', 'test1');
+      const client = await setupClientTest();
       const unexcitingServiceName = 'test1';
 
       const createError = async () => {
-        await client.fetchUpdateServiceWebhook(unexcitingServiceName, 'some');
+        await client.updateServiceByServiceName(unexcitingServiceName, 'some');
       };
 
       await expect(createError).rejects.toThrow(
@@ -37,15 +38,14 @@ describe('Test d2c-api/d2c-client-api module', () => {
       );
     });
     test('if throws error that hook does not exist', async () => {
-      setupClientTest();
+      const client = await setupClientTest();
       nock(D2cApiClient.baseUrl)
         .get(`/v1/service/${serviceId}/hook`)
         .query({ generate: false })
         .reply(200, { result: null });
-      const client = await createD2cApiWithAuth('test', 'test1');
 
       const createError = async () => {
-        await client.fetchUpdateServiceWebhook(serviceName, 'some');
+        await client.updateServiceByServiceName(serviceName, 'some');
       };
 
       await expect(createError).rejects.toThrow(
@@ -54,22 +54,32 @@ describe('Test d2c-api/d2c-client-api module', () => {
         ),
       );
     });
-
-    test('if returns correct webhook url', async () => {
-      setupClientTest();
+    test('if updateService returns correct status', async () => {
+      const client = await setupClientTest();
       nock(D2cApiClient.baseUrl)
         .get(`/v1/service/${serviceId}/hook`)
         .query({ generate: false })
         .reply(200, { result: hookId });
-      const client = await createD2cApiWithAuth('test', 'test1');
-      const webhook = await client.fetchUpdateServiceWebhook(
+      nock(D2cApiClient.baseUrl)
+        .get(`/hook/service/${hookId}?actions=some`)
+        .reply(200);
+      const status = await client.updateServiceByServiceName(
         serviceName,
         'some',
       );
 
-      expect(webhook).toEqual(
-        `${D2cApiClient.baseUrl}hook/service/${hookId}?actions=some`,
-      );
+      expect(status).toEqual(200);
+    });
+    test('if updateService throws error if non 2xx status is returned', async () => {
+      const client = await setupClientTest();
+      nock(D2cApiClient.baseUrl)
+        .get(`/v1/service/${serviceId}/hook`)
+        .reply(500);
+      const createError = async () => {
+        await client.updateServiceByServiceName(serviceName, 'some');
+      };
+
+      expect(createError).rejects.toThrow();
     });
   });
   describe('Test createD2cError function', () => {

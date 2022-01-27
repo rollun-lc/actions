@@ -12,7 +12,10 @@ class D2cApiClient {
     });
   }
 
-  public async fetchUpdateServiceWebhook(serviceName: string, actions: string) {
+  public async updateServiceByServiceName(
+    serviceName: string,
+    actions: string,
+  ) {
     const serviceId = await this.fetchServiceIdByName(serviceName);
     const hookId = await this.fetchHookIdByServiceId(serviceId);
 
@@ -22,7 +25,8 @@ class D2cApiClient {
       );
     }
 
-    return createUpdateWebhookByServiceId(hookId, actions);
+    const webhook = createUpdateWebhookByServiceId(hookId, actions);
+    return this.updateService(webhook);
   }
 
   public async fetchAuthToken(email: string, password: string) {
@@ -44,6 +48,12 @@ class D2cApiClient {
         Authorization: `Bearer ${token}`,
       },
     }));
+  }
+
+  private async updateService(webhook: string) {
+    const { status } = await this.api.get(webhook).catch(createD2cError);
+
+    return status;
   }
 
   private async fetchHookIdByServiceId(serviceId: string) {

@@ -2,7 +2,6 @@ import {
   createUpdateWebhookByServiceId,
   findServiceByName,
 } from '../../src/d2c-api/utils';
-import { D2cApiClient } from '../../src/d2c-api/d2c-client-api';
 
 describe('Test d2c-api/utils module', () => {
   describe('Test findServiceByName function', () => {
@@ -26,7 +25,7 @@ describe('Test d2c-api/utils module', () => {
   describe('Test createUpdateWebhookByServiceId function', () => {
     test('if returns correct webhook url', () => {
       expect(createUpdateWebhookByServiceId('testId', 'someaction')).toEqual(
-        `${D2cApiClient.baseUrl}hook/service/testId?actions=someaction`,
+        `/hook/service/testId?actions=someaction`,
       );
     });
   });

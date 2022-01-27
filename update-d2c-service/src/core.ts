@@ -16,12 +16,7 @@ const updateService = async ({
 }: UpdateServiceParams) => {
   validateActions(commaSeparatedActions);
   const d2cApi = await createD2cApiWithAuth(email, password);
-  const updateHook = await d2cApi.fetchUpdateServiceWebhook(
-    serviceName,
-    commaSeparatedActions,
-  );
-
-  console.log(updateHook);
+  await d2cApi.updateServiceByServiceName(serviceName, commaSeparatedActions);
 };
 
 export { updateService };
