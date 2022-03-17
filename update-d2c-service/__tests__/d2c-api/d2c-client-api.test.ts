@@ -1,9 +1,10 @@
-import { createD2cError, D2cApiClient } from '../../src/d2c-api/d2c-client-api';
+import { createD2cError } from '../../src/d2c-api/d2c-client-api';
 import { AxiosError } from 'axios';
 // @ts-ignore
 import nock from 'nock';
 import { createD2cApiWithAuth } from '../../src/d2c-api/create-d2c-api-with-auth';
 
+const d2cBaseApiUrl = 'https://api.rollun.net';
 describe('Test d2c-api/d2c-client-api module', () => {
   describe('Test fetchUpdateServiceWebhook function', () => {
     const serviceName = 'test';
@@ -11,16 +12,20 @@ describe('Test d2c-api/d2c-client-api module', () => {
     const hookId = 'testIdHook';
 
     const setupClientTest = async () => {
-      nock(D2cApiClient.baseUrl)
+      nock(d2cBaseApiUrl)
         .post('/login')
         .reply(200, { member: { token: 'test' } });
-      nock(D2cApiClient.baseUrl)
+      nock(d2cBaseApiUrl)
         .get('/v1/acc/entities')
         .reply(200, {
           result: { services: [{ name: serviceName, id: serviceId }] },
         });
 
-      return createD2cApiWithAuth('test', 'test1');
+      return createD2cApiWithAuth({
+        email: 'test',
+        password: 'test1',
+        d2cBaseApiUrl,
+      });
     };
 
     test('if throws error that service does not exist', async () => {
@@ -39,7 +44,7 @@ describe('Test d2c-api/d2c-client-api module', () => {
     });
     test('if throws error that hook does not exist', async () => {
       const client = await setupClientTest();
-      nock(D2cApiClient.baseUrl)
+      nock(d2cBaseApiUrl)
         .get(`/v1/service/${serviceId}/hook`)
         .query({ generate: false })
         .reply(200, { result: null });
@@ -56,11 +61,11 @@ describe('Test d2c-api/d2c-client-api module', () => {
     });
     test('if updateService returns correct status', async () => {
       const client = await setupClientTest();
-      nock(D2cApiClient.baseUrl)
+      nock(d2cBaseApiUrl)
         .get(`/v1/service/${serviceId}/hook`)
         .query({ generate: false })
         .reply(200, { result: hookId });
-      nock(D2cApiClient.baseUrl)
+      nock(d2cBaseApiUrl)
         .get(`/hook/service/${hookId}?actions=some`)
         .reply(200);
       const status = await client.updateServiceByServiceName(
@@ -72,9 +77,7 @@ describe('Test d2c-api/d2c-client-api module', () => {
     });
     test('if updateService throws error if non 2xx status is returned', async () => {
       const client = await setupClientTest();
-      nock(D2cApiClient.baseUrl)
-        .get(`/v1/service/${serviceId}/hook`)
-        .reply(500);
+      nock(d2cBaseApiUrl).get(`/v1/service/${serviceId}/hook`).reply(500);
       const createError = async () => {
         await client.updateServiceByServiceName(serviceName, 'some');
       };

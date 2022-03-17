@@ -6,6 +6,7 @@ type UpdateServiceParams = {
   email: string;
   password: string;
   commaSeparatedActions: string;
+  d2cBaseApiUrl: string;
 };
 
 const updateService = async ({
@@ -13,9 +14,10 @@ const updateService = async ({
   email,
   commaSeparatedActions,
   password,
+  d2cBaseApiUrl,
 }: UpdateServiceParams) => {
   validateActions(commaSeparatedActions);
-  const d2cApi = await createD2cApiWithAuth(email, password);
+  const d2cApi = await createD2cApiWithAuth({ email, password, d2cBaseApiUrl });
   await d2cApi.updateServiceByServiceName(serviceName, commaSeparatedActions);
 };
 

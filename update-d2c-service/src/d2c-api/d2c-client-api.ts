@@ -2,13 +2,16 @@ import axios, { AxiosError, AxiosInstance } from 'axios';
 import { EntitiesResponse, GenerateHookResponse, LoginResponse } from './types';
 import { createUpdateWebhookByServiceId, findServiceByName } from './utils';
 
+type D2cApiClientOptions = {
+  baseUrl: string;
+};
+
 class D2cApiClient {
   private api: AxiosInstance;
-  public static baseUrl = 'https://api.d2c.io/';
 
-  constructor() {
+  constructor(options: D2cApiClientOptions) {
     this.api = axios.create({
-      baseURL: D2cApiClient.baseUrl,
+      baseURL: options.baseUrl,
     });
   }
 

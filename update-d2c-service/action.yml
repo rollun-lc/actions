@@ -10,6 +10,10 @@ inputs:
   d2c-password:
     description: 'Password of d2c account'
     required: true
+  d2c-base-api-url:
+    description: 'Base path of d2c api'
+    required: false
+    default: 'https://api.rollun.net'
   actions:
     description: |
       List of actions, in string separated by commas with no spaces,
@@ -17,10 +21,6 @@ inputs:
       Available options: restart,updateSources,updateLocalDeps,updateGlobalDeps,updateVersion
     required: false
     default: 'updateSources,updateLocalDeps,updateGlobalDeps,updateVersion'
-
-outputs:
-  result:
-    description: 'Outputs the result of an actions, could be false or true'
 
 runs:
   using: 'node16'
