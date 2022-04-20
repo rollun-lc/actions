@@ -16,7 +16,7 @@ inputs:
 outputs:
   result:
     description: 'Outputs the result of an actions, could be false or true'
-    
+
 runs:
   using: 'node16'
-  main: 'build/index.js'
+  main: 'build/index.ts'

@@ -1,0 +1,14 @@
+name: 'Refresh node red module'
+description: 'This refreshes npm module in node-red'
+inputs:
+  name:
+    description: 'Name of npm modules'
+    required: true
+  node-red-url:
+    description: 'Url of node red website'
+    default: 'https://flows.nodered.org/'
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'build/index.ts'

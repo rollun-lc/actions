@@ -25,5 +25,8 @@
   "bugs": {
     "url": "https://github.com/rollun-com/actions/issues"
   },
-  "homepage": "https://github.com/rollun-com/actions#readme"
+  "homepage": "https://github.com/rollun-com/actions#readme",
+  "dependencies": {
+    "@actions/core": "^1.6.0"
+  }
 }
