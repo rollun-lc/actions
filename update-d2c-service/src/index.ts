@@ -11,10 +11,10 @@ const run = async (exec: Function) => {
 };
 
 const runAction = () => {
-  if (!context.ref.includes(context.payload.repository?.default_branch)) {
-    console.log('This actions only runs on default branch branches');
-    return;
-  }
+  // if (!context.ref.includes(context.payload.repository?.default_branch)) {
+  //   console.log('This actions only runs on default branch branches');
+  //   return;
+  // }
 
   run(async () =>
     updateService({

@@ -20,7 +20,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
-const github_1 = require("@actions/github");
 const core_1 = require("./core");
 const run = async (exec) => {
     try {
@@ -31,10 +30,10 @@ const run = async (exec) => {
     }
 };
 const runAction = () => {
-    if (!github_1.context.ref.includes(github_1.context.payload.repository?.default_branch)) {
-        console.log('This actions only runs on default branch branches');
-        return;
-    }
+    // if (!context.ref.includes(context.payload.repository?.default_branch)) {
+    //   console.log('This actions only runs on default branch branches');
+    //   return;
+    // }
     run(async () => (0, core_1.updateService)({
         serviceName: core.getInput('service-name'),
         email: core.getInput('d2c-email'),
