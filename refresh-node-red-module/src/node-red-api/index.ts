@@ -1,5 +1,7 @@
 import Axios from 'axios';
 import { stringify } from 'qs';
+import * as core from '@actions/core';
+import axiosRetry from 'axios-retry';
 
 type NodeRedApiOpts = {
   baseUrl: string;
@@ -11,6 +13,13 @@ export class NodeRedApi {
   constructor({ baseUrl }: NodeRedApiOpts) {
     this.api = Axios.create({
       baseURL: baseUrl,
+    });
+    axiosRetry(this.api, {
+      retries: 3,
+      retryDelay: (retryCount) => {
+        core.warning(`Retrying ${retryCount} update npm module in node-red`);
+        return axiosRetry.exponentialDelay(retryCount);
+      },
     });
   }
 
