@@ -1,0 +1,44 @@
+name: 'Build and deploy image to D2C'
+description: 'Build and deploy image to D2C'
+inputs:
+  docker-user:
+    description: 'Docker user used to login to the container registry'
+    required: true
+  docker-password:
+    description: 'Docker password used to login to the container registry'
+    required: true
+  image:
+    description: 'Image name of the built container'
+    required: true
+  service-name:
+    description: 'Name of the service to deploy in D2C'
+    required: true
+  d2c-username:
+    description: 'D2C username used to trigger update of the container'
+    required: true
+  d2c-password:
+    description: 'D2C password used to trigger update of the container'
+    required: true
+  dockerfile-path:
+    description: 'Path to the Dockerfile'
+    default: 'Dockerfile'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v3
+
+    - name: Docker login
+      run: docker login ghcr.io -u ${{ inputs.docker-user }} -p ${{ inputs.docker-password }}
+
+    - name: Build
+      run: docker build -f ${{ inputs.dockerfile-path }} -t ${{ inputs.image }} .
+
+    - name: Push
+      run: docker push ${{ inputs.image }}:latest
+
+    - uses: rollun-com/actions/update-d2c-service@master
+      with:
+        service-name: ${{ inputs.service-name }}
+        d2c-email: ${{ inputs.d2c-user }}
+        d2c-password: ${{ inputs.d2c-password }}
