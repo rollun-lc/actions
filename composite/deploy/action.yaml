@@ -29,12 +29,15 @@ runs:
     - uses: actions/checkout@v3
 
     - name: Docker login
+      shell: bash
       run: docker login ghcr.io -u ${{ inputs.docker-user }} -p ${{ inputs.docker-password }}
 
     - name: Build
+      shell: bash
       run: docker build -f ${{ inputs.dockerfile-path }} -t ${{ inputs.image }} .
 
     - name: Push
+      shell: bash
       run: docker push ${{ inputs.image }}:latest
 
     - uses: rollun-com/actions/update-d2c-service@master
