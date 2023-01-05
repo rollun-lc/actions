@@ -1,0 +1,20 @@
+initial-service-host: hetzner-staging
+d2c-service-config:
+  type: docker
+  image: ghcr.io/rollun-com/node-services/node-services/image
+  version: latest
+  name: new-service
+  description: new description
+  project: 'Infra'
+  ports:
+    - value: 80
+      protocol: TCP
+  crons:
+    - active: true
+      name: 'test-cron-1'
+      command: 'curl https://google.com'
+      time: '* * * * *'
+    - active: false
+      name: 'test-cron'
+      command: 'curl https://google.com'
+      time: '* * * * *'

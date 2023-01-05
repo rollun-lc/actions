@@ -1,2 +1,1 @@
-declare const validateActions: (actions: string) => void;
-export { validateActions };
+export declare const validateActions: (actions: string) => void;

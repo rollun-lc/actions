@@ -30,10 +30,6 @@ const run = async (exec) => {
     }
 };
 const runAction = () => {
-    // if (!context.ref.includes(context.payload.repository?.default_branch)) {
-    //   console.log('This actions only runs on default branch branches');
-    //   return;
-    // }
     run(async () => (0, core_1.updateService)({
         serviceName: core.getInput('service-name'),
         email: core.getInput('d2c-email'),

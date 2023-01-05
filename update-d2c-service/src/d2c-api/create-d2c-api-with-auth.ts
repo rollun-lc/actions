@@ -12,9 +12,8 @@ const createD2cApiWithAuth = async ({
   d2cBaseApiUrl,
 }: CreateD2cApiWithAuthOptions) => {
   const d2cClient = new D2cApiClient({ baseUrl: d2cBaseApiUrl });
-  const token = await d2cClient.fetchAuthToken(email, password);
 
-  d2cClient.setToken(token);
+  await d2cClient.authenticate(email, password);
 
   return d2cClient;
 };

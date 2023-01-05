@@ -12,7 +12,7 @@ const availableActions = [
   'updateGlobalDeps',
   'updateVersion',
 ];
-const validateActions = (actions: string) => {
+export const validateActions = (actions: string) => {
   const actionsArray = actions.split(',');
   const invalidActions: string[] = [];
 
@@ -30,5 +30,3 @@ const validateActions = (actions: string) => {
     );
   }
 };
-
-export { validateActions };
