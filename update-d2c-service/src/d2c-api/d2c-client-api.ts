@@ -3,6 +3,7 @@ import { D2CServiceConfig, EntitiesResponse, EntityHost, EntityProject, EntitySe
 import { createUpdateWebhookByServiceId, findServiceByName } from './utils';
 import _ from 'lodash';
 import { wait } from 'better-wait';
+import * as core from '@actions/core';
 
 type D2cApiClientOptions = {
   baseUrl: string;
@@ -18,7 +19,7 @@ class D2CBasicClient {
 
     this.api.interceptors.request.use((config) => {
       if (config.method !== 'GET') {
-        console.log(`${config.method} ${config.url}`);
+        core.info(`${config.method} ${config.url}`);
       }
       return config;
     });
@@ -33,7 +34,7 @@ class D2CBasicClient {
 
     const token = data?.member?.token;
     if (!token) {
-      console.log(data);
+      core.info(JSON.stringify(data));
       throw new Error('No token returned from the API');
     }
 
@@ -130,11 +131,11 @@ class D2cApiClient extends D2CBasicClient {
 
   let service;
    do {
-    console.log('checking service progress in 2s...');
+    core.info('checking service progress in 2s...');
     await wait('2s');
 
     service = await this.fetchServiceById(serviceId, true) as EntityService;
-    console.log(`service progress is [${service.process}]`);
+    core.info(`service progress is [${service.process}]`);
    } while (service.process !== '');
   }
 
@@ -190,14 +191,14 @@ class D2cApiClient extends D2CBasicClient {
       }
     }
 
-    console.log('payload', payload);
+    core.info(JSON.stringify(payload));
 
     if (service) {
       if (!_.isMatch(service, payload)) {
         await this.api.put(`/v1/service/${type}/${service.id}`, payload)
         await this.awaitServiceAction(service.id);
       } else {
-        console.log('no changes to the service, skip update')
+        core.info('no changes to the service, skip update')
       }
     } else {
       const { data } = await this.api.post(`/v1/service/${type}`, payload);

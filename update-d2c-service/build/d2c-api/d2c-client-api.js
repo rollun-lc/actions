@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -8,6 +27,7 @@ const axios_1 = __importDefault(require("axios"));
 const utils_1 = require("./utils");
 const lodash_1 = __importDefault(require("lodash"));
 const better_wait_1 = require("better-wait");
+const core = __importStar(require("@actions/core"));
 class D2CBasicClient {
     api;
     constructor(options) {
@@ -16,7 +36,7 @@ class D2CBasicClient {
         });
         this.api.interceptors.request.use((config) => {
             if (config.method !== 'GET') {
-                console.log(`${config.method} ${config.url}`);
+                core.info(`${config.method} ${config.url}`);
             }
             return config;
         });
@@ -30,7 +50,7 @@ class D2CBasicClient {
             .catch(createD2cError);
         const token = data?.member?.token;
         if (!token) {
-            console.log(data);
+            core.info(JSON.stringify(data));
             throw new Error('No token returned from the API');
         }
         this.setToken(token);
@@ -101,10 +121,10 @@ class D2cApiClient extends D2CBasicClient {
     async awaitServiceAction(serviceId) {
         let service;
         do {
-            console.log('checking service progress in 2s...');
+            core.info('checking service progress in 2s...');
             await (0, better_wait_1.wait)('2s');
             service = await this.fetchServiceById(serviceId, true);
-            console.log(`service progress is [${service.process}]`);
+            core.info(`service progress is [${service.process}]`);
         } while (service.process !== '');
     }
     async updateService(config, service) {
@@ -145,14 +165,14 @@ class D2cApiClient extends D2CBasicClient {
                 await this.awaitServiceAction(service.id);
             }
         }
-        console.log('payload', payload);
+        core.info(JSON.stringify(payload));
         if (service) {
             if (!lodash_1.default.isMatch(service, payload)) {
                 await this.api.put(`/v1/service/${type}/${service.id}`, payload);
                 await this.awaitServiceAction(service.id);
             }
             else {
-                console.log('no changes to the service, skip update');
+                core.info('no changes to the service, skip update');
             }
         }
         else {
