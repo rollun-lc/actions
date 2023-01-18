@@ -3,7 +3,10 @@ description: 'This action updates service in d2c'
 inputs:
   service-name:
     description: 'Name of service in d2c'
-    required: true
+    required: false
+  config-path:
+    description: 'The path to config file'
+    required: false
   d2c-email:
     description: 'Email of d2c account'
     required: true

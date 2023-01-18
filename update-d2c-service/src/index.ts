@@ -1,5 +1,4 @@
 import * as core from '@actions/core';
-import { context } from '@actions/github';
 import { updateService } from './core';
 
 const run = async (exec: Function) => {
@@ -11,11 +10,6 @@ const run = async (exec: Function) => {
 };
 
 const runAction = () => {
-  // if (!context.ref.includes(context.payload.repository?.default_branch)) {
-  //   console.log('This actions only runs on default branch branches');
-  //   return;
-  // }
-
   run(async () =>
     updateService({
       serviceName: core.getInput('service-name'),
