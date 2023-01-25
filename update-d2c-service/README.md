@@ -35,7 +35,7 @@ Advanced usage with configPath
 ```
 
 
-Example if config:
+Example docker service definition config:
 ```yaml
 # only for initial service creation, ignored on updates
 initial-service-host: hetzner-staging
@@ -60,4 +60,30 @@ d2c-service-config:
       command: 'curl https://google.com'
       time: '* * * * *'
 
+```
+
+Example nginx service definition config:
+```yaml
+# only for initial service creation, ignored on updates
+initial-service-host: hetzner-staging
+d2c-service-config:
+  type: nginx
+  version: '1.19'
+  remoteAccess: false
+  # optional link to php fastcgi service 
+  services: 
+    - name: rollun-crm-php
+      # Supported types:
+      # - fastcgi
+      # - custom - if type = custom, 'file' property is required
+      type: fastcgi 
+      appRoot: /var/www/app/public_a
+
+  # change to the name will result in new service created
+  name: test-nginx
+  description: new description
+  project: 'Test'
+  ports:
+    - value: 80
+      protocol: TCP
 ```
