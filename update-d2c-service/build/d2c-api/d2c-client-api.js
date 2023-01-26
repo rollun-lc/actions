@@ -162,7 +162,8 @@ class D2cApiClient extends D2CBasicClient {
                     configStr = fs_1.default.readFileSync(file, 'utf8');
                 }
                 if (type === 'fastcgi') {
-                    configStr = await (0, ejs_1.renderFile)(`./templates/nginx-${type}-service-proxy.conf.template`, { appRoot });
+                    configStr = await (0, ejs_1.renderFile)(__dirname +
+                        `/templates/nginx-${type}-service-proxy.conf.template`, { appRoot });
                 }
                 return {
                     id: service.id,
@@ -182,7 +183,7 @@ class D2cApiClient extends D2CBasicClient {
                     {
                         custom: false,
                         name: 'nginx.conf',
-                        text: await (0, ejs_1.renderFile)('./templates/default-nginx-root.conf.template'),
+                        text: await (0, ejs_1.renderFile)(__dirname + '/templates/default-nginx-root.conf.template'),
                     },
                 ],
             };

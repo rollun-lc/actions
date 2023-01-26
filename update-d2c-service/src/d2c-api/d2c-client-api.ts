@@ -211,7 +211,8 @@ class D2cApiClient extends D2CBasicClient {
 
           if (type === 'fastcgi') {
             configStr = await renderFile(
-              `./templates/nginx-${type}-service-proxy.conf.template`,
+              __dirname +
+                `/templates/nginx-${type}-service-proxy.conf.template`,
               { appRoot },
             );
           }
@@ -237,7 +238,7 @@ class D2cApiClient extends D2CBasicClient {
             custom: false,
             name: 'nginx.conf',
             text: await renderFile(
-              './templates/default-nginx-root.conf.template',
+              __dirname + '/templates/default-nginx-root.conf.template',
             ),
           },
         ],
