@@ -13,6 +13,7 @@ const runAction = () => {
   run(async () =>
     updateService({
       serviceName: core.getInput('service-name'),
+      configPath: core.getInput('config-path'),
       email: core.getInput('d2c-email'),
       password: core.getInput('d2c-password'),
       d2cBaseApiUrl: core.getInput('d2c-base-api-url'),
