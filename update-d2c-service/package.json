@@ -25,7 +25,7 @@
     "@types/nock": "^11.1.0"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf build && tsc && mkdir -p ./build/d2c-api/templates && cp ./src/d2c-api/templates/* ./build/d2c-api/templates",
     "test": "jest",
     "test:coverage": "jest --coverage --coverageReporters=\"json-summary\" --watchAll=false"
   },

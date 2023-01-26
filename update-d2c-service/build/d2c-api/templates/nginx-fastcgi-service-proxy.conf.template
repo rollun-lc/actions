@@ -1,0 +1,37 @@
+server {
+  listen $mainPort;
+  $serviceNginxHTTPS
+  root <%= appRoot %>;
+  server_name $serviceDomains;
+  server_tokens off; ## Don't show the nginx version number
+  index index.php index.html;
+  resolver 172.17.0.1 valid=60s ipv6=off;
+  set $backend $serviceName;
+  include conf.d/letsencrypt.inc;
+  location ~ /\.git {
+    deny all;
+  }
+
+  try_files $uri $uri/ @rewrite;
+  location @rewrite {
+    rewrite ^/(.*)$ /index.php;
+  }
+  location ~* ^.+\.(jpg|jpeg|gif|png|ico|css|pdf|ppt|txt|bmp|rtf|js|json|tpl|ttf|woff|eot|svg)$ {
+    access_log off;
+    add_header Pragma public;
+    add_header Cache-Control "public, must-revalidate, proxy-revalidate";
+    expires 30d;
+  }
+  location ~ \.php$ {
+    fastcgi_keep_conn on;
+    fastcgi_pass $backend:9000;
+    include fastcgi_params;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    fastcgi_buffers 4 256k;
+    fastcgi_busy_buffers_size 256k;
+    fastcgi_temp_file_write_size 256k;
+  }
+  location ~ /\.ht {
+    deny all;
+  }
+}
