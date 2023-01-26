@@ -30,11 +30,16 @@ export declare type EntityHost = {
     id: string;
     name: string;
 };
+export declare type EntityAccount = {
+    id: string;
+    shortId: string;
+};
 export declare type EntitiesResponse = {
     result: {
         services: EntityService[];
         projects: EntityProject[];
         hosts: EntityHost[];
+        accounts: EntityAccount[];
     };
 };
 export declare type GenerateHookResponse = {
@@ -58,6 +63,18 @@ export declare type D2CServiceConfig = {
             name: string;
             command: string;
             time: string;
+        }[];
+        configs?: {
+            custom: boolean;
+            name: string;
+            text: string;
+        }[];
+        services?: {
+            name: string;
+            appRoot: string;
+            config?: string;
+            type: 'fastcgi' | 'custom';
+            file?: string;
         }[];
     };
 };

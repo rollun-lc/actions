@@ -28,6 +28,8 @@ const utils_1 = require("./utils");
 const lodash_1 = __importDefault(require("lodash"));
 const better_wait_1 = require("better-wait");
 const core = __importStar(require("@actions/core"));
+const ejs_1 = require("ejs");
+const fs_1 = __importDefault(require("fs"));
 class D2CBasicClient {
     api;
     constructor(options) {
@@ -76,6 +78,15 @@ class D2cApiClient extends D2CBasicClient {
             .catch(createD2cError);
         return (this.entitiesCache = data);
     }
+    async getServiceInternalDomain(id) {
+        const entities = await this.fetchAllEntities();
+        const shortAccountId = entities.result.accounts[0].shortId;
+        const service = await this.fetchServiceById(id);
+        if (!service) {
+            throw new Error('no such service ' + id);
+        }
+        return `${service.name}-www.${shortAccountId}.at.d2c.io`;
+    }
     async fetchAllServices(force = false) {
         const entities = await this.fetchAllEntities(force);
         return entities.result.services;
@@ -107,7 +118,7 @@ class D2cApiClient extends D2CBasicClient {
         return hosts.find(({ name }) => name === hostName) || null;
     }
     async triggerServiceUpdate(serviceId, actions = 'updateSources,updateLocalDeps,updateGlobalDeps,updateVersion') {
-        const { data: { result: webhookId } } = await this.api
+        const { data: { result: webhookId }, } = await this.api
             .get(`/v1/service/${serviceId}/hook`, {
             params: {
                 generate: false,
@@ -123,9 +134,60 @@ class D2cApiClient extends D2CBasicClient {
         do {
             core.info('checking service progress in 2s...');
             await (0, better_wait_1.wait)('2s');
-            service = await this.fetchServiceById(serviceId, true);
+            service = (await this.fetchServiceById(serviceId, true));
             core.info(`service progress is [${service.process}]`);
         } while (service.process !== '');
+    }
+    async prepareServicePayload(type, config) {
+        if (type === 'docker') {
+            return {
+                network: 'weave',
+                volumesUID: 0,
+                source: { type: 'download', url: '' },
+            };
+        }
+        if (type === 'nginx') {
+            // resolve services name to service id
+            const services = config['d2c-service-config'].services || [];
+            const resolvedServices = services.map(async ({ name, appRoot, config, type, file }) => {
+                const service = await this.fetchServiceByName(name);
+                if (!service) {
+                    throw new Error('no such service ' + name);
+                }
+                let configStr = config;
+                if (type === 'custom') {
+                    if (!file) {
+                        throw new Error("no 'file' specified for custom config");
+                    }
+                    configStr = fs_1.default.readFileSync(file, 'utf8');
+                }
+                if (type === 'fastcgi') {
+                    configStr = await (0, ejs_1.renderFile)(`./templates/nginx-${type}-service-proxy.conf.template`, { appRoot });
+                }
+                return {
+                    id: service.id,
+                    cert: '',
+                    domains: [await this.getServiceInternalDomain(service.id)],
+                    https: 'none',
+                    key: '',
+                    secure: 'high',
+                    static: false,
+                    name,
+                    config: configStr,
+                };
+            });
+            return {
+                services: await Promise.all(resolvedServices),
+                configs: config['d2c-service-config'].configs || [
+                    {
+                        custom: false,
+                        name: 'nginx.conf',
+                        text: await (0, ejs_1.renderFile)('./templates/default-nginx-root.conf.template'),
+                    },
+                ],
+            };
+        }
+        throw new Error('unknown service type');
     }
     async updateService(config, service) {
         const { project: projectName, type, name, crons, ...restConfig } = config['d2c-service-config'];
@@ -133,22 +195,19 @@ class D2cApiClient extends D2CBasicClient {
         if (!project) {
             throw new Error('project not found by ' + projectName);
         }
-        const payload = {
+        let payload = {
             ...restConfig,
-            network: 'weave',
-            volumesUID: 0,
-            source: { type: 'download', url: '' },
         };
         if (!service) {
             const host = await this.fetchHostByName(config['initial-service-host']);
             if (!host) {
-                throw new Error('initial host not found by ' + config['initial-service-host']);
+                throw new Error('Initial host not found by ' + config['initial-service-host']);
             }
             payload.hosts = [
                 {
                     id: host.id,
                     role: 'node',
-                }
+                },
             ];
             payload.name = name;
             payload.project = project.id;
@@ -159,12 +218,17 @@ class D2cApiClient extends D2CBasicClient {
                 await this.api.put(`/v1/service/${service.id}/changeProject?project=${project.id}`);
                 await this.awaitServiceAction(service.id);
             }
-            if (crons.length !== service.crons.length ||
-                !crons.every((newCron) => service.crons.some((oldCron) => lodash_1.default.isMatch(oldCron, newCron)))) {
+            if (crons &&
+                (crons.length !== service.crons.length ||
+                    !crons.every((newCron) => service.crons.some((oldCron) => lodash_1.default.isMatch(oldCron, newCron))))) {
                 await this.api.put(`/v1/service/${service.id}/cron`, crons);
                 await this.awaitServiceAction(service.id);
             }
         }
+        payload = {
+            ...payload,
+            ...(await this.prepareServicePayload(type, config)),
+        };
         core.info(JSON.stringify(payload));
         if (service) {
             if (!lodash_1.default.isMatch(service, payload)) {

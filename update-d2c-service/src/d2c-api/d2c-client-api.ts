@@ -14,7 +14,6 @@ import { wait } from 'better-wait';
 import * as core from '@actions/core';
 import { renderFile } from 'ejs';
 import fs from 'fs';
-import * as path from 'path';
 
 type D2cApiClientOptions = {
   baseUrl: string;
@@ -212,10 +211,7 @@ class D2cApiClient extends D2CBasicClient {
 
           if (type === 'fastcgi') {
             configStr = await renderFile(
-              path.join(
-                __dirname,
-                `./templates/nginx-${type}-service-proxy.conf.template`,
-              ),
+              `./templates/nginx-${type}-service-proxy.conf.template`,
               { appRoot },
             );
           }
@@ -241,10 +237,7 @@ class D2cApiClient extends D2CBasicClient {
             custom: false,
             name: 'nginx.conf',
             text: await renderFile(
-              path.join(
-                __dirname,
-                './templates/default-nginx-root.conf.template',
-              ),
+              './templates/default-nginx-root.conf.template',
             ),
           },
         ],

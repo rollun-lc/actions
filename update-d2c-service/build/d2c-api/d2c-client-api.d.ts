@@ -12,6 +12,7 @@ declare class D2CBasicClient {
 declare class D2cApiClient extends D2CBasicClient {
     entitiesCache: EntitiesResponse | null;
     fetchAllEntities(force?: boolean): Promise<EntitiesResponse>;
+    getServiceInternalDomain(id: string): Promise<string>;
     fetchAllServices(force?: boolean): Promise<EntityService[]>;
     fetchAllProjects(force?: boolean): Promise<EntityProject[]>;
     fetchAllHosts(force?: boolean): Promise<EntityHost[]>;
@@ -21,6 +22,7 @@ declare class D2cApiClient extends D2CBasicClient {
     fetchHostByName(hostName: string, force?: boolean): Promise<EntityHost | null>;
     triggerServiceUpdate(serviceId: any, actions?: string): Promise<number>;
     awaitServiceAction(serviceId: string): Promise<void>;
+    prepareServicePayload(type: string, config: D2CServiceConfig): Promise<Record<string, unknown>>;
     updateService(config: D2CServiceConfig, service?: EntityService | null): Promise<void>;
 }
 declare const createD2cError: (e: AxiosError) => never;
