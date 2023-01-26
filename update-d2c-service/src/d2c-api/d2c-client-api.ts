@@ -207,12 +207,13 @@ class D2cApiClient extends D2CBasicClient {
               throw new Error("no 'file' specified for custom config");
             }
             configStr = fs.readFileSync(file, 'utf8');
+          } else {
+            configStr = await renderFile(
+              __dirname +
+                `/templates/nginx-${type}-service-proxy.conf.template`,
+              { appRoot },
+            );
           }
-
-          configStr = await renderFile(
-            __dirname + `/templates/nginx-${type}-service-proxy.conf.template`,
-            { appRoot },
-          );
 
           return {
             id: service.id,
