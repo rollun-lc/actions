@@ -209,13 +209,10 @@ class D2cApiClient extends D2CBasicClient {
             configStr = fs.readFileSync(file, 'utf8');
           }
 
-          if (type === 'fastcgi') {
-            configStr = await renderFile(
-              __dirname +
-                `/templates/nginx-${type}-service-proxy.conf.template`,
-              { appRoot },
-            );
-          }
+          configStr = await renderFile(
+            __dirname + `/templates/nginx-${type}-service-proxy.conf.template`,
+            { appRoot },
+          );
 
           return {
             id: service.id,
