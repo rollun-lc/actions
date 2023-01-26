@@ -161,7 +161,10 @@ class D2cApiClient extends D2CBasicClient {
                     }
                     configStr = fs_1.default.readFileSync(file, 'utf8');
                 }
-                configStr = await (0, ejs_1.renderFile)(__dirname + `/templates/nginx-${type}-service-proxy.conf.template`, { appRoot });
+                else {
+                    configStr = await (0, ejs_1.renderFile)(__dirname +
+                        `/templates/nginx-${type}-service-proxy.conf.template`, { appRoot });
+                }
                 return {
                     id: service.id,
                     cert: '',
