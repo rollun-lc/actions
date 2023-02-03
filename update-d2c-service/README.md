@@ -50,6 +50,14 @@ d2c-service-config:
   ports:
     - value: 80
       protocol: TCP
+  env:
+    - name: NODE_ENV
+      value: production
+    - name: PORT
+      value: '80'
+    # note that values support env variables
+    - name: MONGO_URI
+      value: mongodb://${MONGO_USER}:${MONGO_PASS}@mongo:27017
   crons:
     - active: true
       name: 'test-cron-1'

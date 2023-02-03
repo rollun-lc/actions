@@ -20,9 +20,13 @@ declare class D2cApiClient extends D2CBasicClient {
     fetchServiceById(serviceId: string, force?: boolean): Promise<EntityService | null>;
     fetchProjectByName(projectName: string, force?: boolean): Promise<EntityProject | null>;
     fetchHostByName(hostName: string, force?: boolean): Promise<EntityHost | null>;
-    triggerServiceUpdate(serviceId: any, actions?: string): Promise<number>;
+    triggerServiceUpdate(serviceId: string, actions?: string): Promise<number>;
     awaitServiceAction(serviceId: string): Promise<void>;
     prepareServicePayload(type: string, config: D2CServiceConfig): Promise<Record<string, unknown>>;
+    resolveEnvVars(env: D2CServiceConfig['d2c-service-config']['env']): Promise<{
+        name: string;
+        value: string;
+    }[]>;
     updateService(config: D2CServiceConfig, service?: EntityService | null): Promise<void>;
 }
 declare const createD2cError: (e: AxiosError) => never;

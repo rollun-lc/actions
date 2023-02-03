@@ -190,6 +190,30 @@ class D2cApiClient extends D2CBasicClient {
         }
         throw new Error('unknown service type');
     }
+    async resolveEnvVars(env) {
+        if (!env?.length) {
+            return [];
+        }
+        let resolvedEnvs = [];
+        const envVarPattern = /\$\{(.+?)\}/gm;
+        for (const { name, value } of env) {
+            if (!envVarPattern.test(value)) {
+                // env does not contain reference to env var like ${TEST_ENV}
+                resolvedEnvs.push({ name, value });
+                continue;
+            }
+            const resolvedValue = value.replaceAll(envVarPattern, (_, envName) => {
+                const envVar = process.env[envName];
+                if (!envVar) {
+                    throw new Error(`env var ${envName} not found`);
+                }
+                return envVar;
+            });
+            resolvedEnvs.push({ name, value: resolvedValue });
+        }
+        console.log(resolvedEnvs);
+        return resolvedEnvs;
+    }
     async updateService(config, service) {
         const { project: projectName, type, name, crons, ...restConfig } = config['d2c-service-config'];
         const project = await this.fetchProjectByName(projectName);
@@ -198,6 +222,9 @@ class D2cApiClient extends D2CBasicClient {
         }
         let payload = {
             ...restConfig,
+            ...(restConfig.env
+                ? { env: await this.resolveEnvVars(restConfig.env) }
+                : {}),
         };
         if (!service) {
             const host = await this.fetchHostByName(config['initial-service-host']);
@@ -230,7 +257,7 @@ class D2cApiClient extends D2CBasicClient {
             ...payload,
             ...(await this.prepareServicePayload(type, config)),
         };
-        core.info(JSON.stringify(payload));
+        core.info(JSON.stringify({ ...payload, env: '*** reducted ***' }));
         if (service) {
             if (!lodash_1.default.isMatch(service, payload)) {
                 await this.api.put(`/v1/service/${type}/${service.id}`, payload);

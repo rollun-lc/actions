@@ -69,6 +69,10 @@ export declare type D2CServiceConfig = {
             name: string;
             text: string;
         }[];
+        env?: {
+            name: string;
+            value: string;
+        }[];
         services?: {
             name: string;
             appRoot: string;

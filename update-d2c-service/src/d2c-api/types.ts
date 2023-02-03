@@ -62,6 +62,7 @@ export type D2CServiceConfig = {
     project: string;
     crons: { active: boolean; name: string; command: string; time: string }[];
     configs?: { custom: boolean; name: string; text: string }[];
+    env?: { name: string; value: string }[];
     services?: {
       name: string;
       appRoot: string;

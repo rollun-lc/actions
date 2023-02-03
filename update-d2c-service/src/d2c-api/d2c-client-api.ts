@@ -147,7 +147,7 @@ class D2cApiClient extends D2CBasicClient {
   }
 
   public async triggerServiceUpdate(
-    serviceId,
+    serviceId: string,
     actions = 'updateSources,updateLocalDeps,updateGlobalDeps,updateVersion',
   ) {
     const {
@@ -246,6 +246,38 @@ class D2cApiClient extends D2CBasicClient {
     throw new Error('unknown service type');
   }
 
+  public async resolveEnvVars(
+    env: D2CServiceConfig['d2c-service-config']['env'],
+  ) {
+    if (!env?.length) {
+      return [];
+    }
+
+    let resolvedEnvs: D2CServiceConfig['d2c-service-config']['env'] = [];
+
+    const envVarPattern = /\$\{(.+?)\}/gm;
+    for (const { name, value } of env) {
+      if (!envVarPattern.test(value)) {
+        // env does not contain reference to env var like ${TEST_ENV}
+        resolvedEnvs.push({ name, value });
+        continue;
+      }
+
+      const resolvedValue = value.replaceAll(envVarPattern, (_, envName) => {
+        const envVar = process.env[envName];
+        if (!envVar) {
+          throw new Error(`env var ${envName} not found`);
+        }
+        return envVar;
+      });
+
+      resolvedEnvs.push({ name, value: resolvedValue });
+    }
+    console.log(resolvedEnvs);
+
+    return resolvedEnvs;
+  }
+
   public async updateService(
     config: D2CServiceConfig,
     service?: EntityService | null,
@@ -265,6 +297,9 @@ class D2cApiClient extends D2CBasicClient {
 
     let payload: Record<string, unknown> = {
       ...restConfig,
+      ...(restConfig.env
+        ? { env: await this.resolveEnvVars(restConfig.env) }
+        : {}),
     };
 
     if (!service) {
@@ -309,7 +344,7 @@ class D2cApiClient extends D2CBasicClient {
       ...(await this.prepareServicePayload(type, config)),
     };
 
-    core.info(JSON.stringify(payload));
+    core.info(JSON.stringify({ ...payload, env: '*** reducted ***' }));
 
     if (service) {
       if (!_.isMatch(service, payload)) {
