@@ -33,6 +33,12 @@ class D2CBasicClient {
       }
       return config;
     });
+    this.api.interceptors.response.use(undefined,  (error: AxiosError) => {
+      if (error.response?.data) {
+        core.info(error.response?.data.message || JSON.stringify(error.response?.data));
+      }
+      throw error;
+    });
   }
   public async authenticate(email: string, password: string) {
     const { data } = await this.api
@@ -273,7 +279,6 @@ class D2cApiClient extends D2CBasicClient {
 
       resolvedEnvs.push({ name, value: resolvedValue });
     }
-    console.log(resolvedEnvs);
 
     return resolvedEnvs;
   }
