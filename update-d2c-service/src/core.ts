@@ -2,6 +2,7 @@ import { createD2cApiWithAuth } from './d2c-api/create-d2c-api-with-auth';
 import { validateActions } from './utils';
 import * as YAML from 'yaml';
 import fs from 'fs';
+import { validateConfig } from './validate-config';
 
 type UpdateServiceParams = {
   serviceName: string;
@@ -26,6 +27,10 @@ const updateService = async ({
   const config = configPath 
     ? YAML.parse(fs.readFileSync(configPath, 'utf8'))
     : { 'd2c-service-config': { name: serviceName } };
+
+  if (!validateConfig(config)) {
+    throw new Error('config is not valid, see messages above');
+  }
 
   const d2cApi = await createD2cApiWithAuth({ email, password, d2cBaseApiUrl });
   const service = await d2cApi.fetchServiceByName(config['d2c-service-config'].name);
