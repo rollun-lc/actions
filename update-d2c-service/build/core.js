@@ -27,12 +27,16 @@ const create_d2c_api_with_auth_1 = require("./d2c-api/create-d2c-api-with-auth")
 const utils_1 = require("./utils");
 const YAML = __importStar(require("yaml"));
 const fs_1 = __importDefault(require("fs"));
+const validate_config_1 = require("./validate-config");
 const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, }) => {
     (0, utils_1.validateActions)(commaSeparatedActions);
     // fallback to serviceName, if no config provided
     const config = configPath
         ? YAML.parse(fs_1.default.readFileSync(configPath, 'utf8'))
         : { 'd2c-service-config': { name: serviceName } };
+    if (!(0, validate_config_1.validateConfig)(config)) {
+        throw new Error('config is not valid, see messages above');
+    }
     const d2cApi = await (0, create_d2c_api_with_auth_1.createD2cApiWithAuth)({ email, password, d2cBaseApiUrl });
     const service = await d2cApi.fetchServiceByName(config['d2c-service-config'].name);
     // if service exists, but no config provided, just use old flow, and trigger update hook.

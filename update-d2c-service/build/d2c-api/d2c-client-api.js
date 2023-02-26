@@ -44,7 +44,7 @@ class D2CBasicClient {
         });
         this.api.interceptors.response.use(undefined, (error) => {
             if (error.response?.data) {
-                core.info(error.response?.data.message || JSON.stringify(error.response?.data));
+                core.error(error.response?.data.message || JSON.stringify(error.response?.data));
             }
             throw error;
         });
@@ -203,12 +203,13 @@ class D2cApiClient extends D2CBasicClient {
         let resolvedEnvs = [];
         const envVarPattern = /\$\{(.+?)\}/gm;
         for (const { name, value } of env) {
-            if (!envVarPattern.test(value)) {
+            let castedValue = `${value || ''}`;
+            if (!envVarPattern.test(castedValue)) {
                 // env does not contain reference to env var like ${TEST_ENV}
-                resolvedEnvs.push({ name, value });
+                resolvedEnvs.push({ name, value: castedValue });
                 continue;
             }
-            const resolvedValue = value.replaceAll(envVarPattern, (_, envName) => {
+            const resolvedValue = castedValue.replaceAll(envVarPattern, (_, envName) => {
                 const envVar = process.env[envName];
                 if (!envVar) {
                     throw new Error(`env var ${envName} not found`);
