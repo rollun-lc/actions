@@ -34,9 +34,6 @@ const updateService = async ({ serviceName, configPath, email, commaSeparatedAct
     const config = configPath
         ? YAML.parse(fs_1.default.readFileSync(configPath, 'utf8'))
         : { 'd2c-service-config': { name: serviceName } };
-    if (!(0, validate_config_1.validateConfig)(config)) {
-        throw new Error('config is not valid, see messages above');
-    }
     const d2cApi = await (0, create_d2c_api_with_auth_1.createD2cApiWithAuth)({ email, password, d2cBaseApiUrl });
     const service = await d2cApi.fetchServiceByName(config['d2c-service-config'].name);
     // if service exists, but no config provided, just use old flow, and trigger update hook.
@@ -46,6 +43,9 @@ const updateService = async ({ serviceName, configPath, email, commaSeparatedAct
     }
     if (!configPath) {
         throw new Error('configPath is required, if service does not exist. provide your config in configPath, to autocreate/update service');
+    }
+    if (!(0, validate_config_1.validateConfig)(config)) {
+        throw new Error('config is not valid, see messages above');
     }
     await d2cApi.updateService(config, service);
 };

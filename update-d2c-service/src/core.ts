@@ -28,10 +28,6 @@ const updateService = async ({
     ? YAML.parse(fs.readFileSync(configPath, 'utf8'))
     : { 'd2c-service-config': { name: serviceName } };
 
-  if (!validateConfig(config)) {
-    throw new Error('config is not valid, see messages above');
-  }
-
   const d2cApi = await createD2cApiWithAuth({ email, password, d2cBaseApiUrl });
   const service = await d2cApi.fetchServiceByName(config['d2c-service-config'].name);
 
@@ -39,10 +35,14 @@ const updateService = async ({
   if (service && !configPath) {
     await d2cApi.triggerServiceUpdate(service.id, commaSeparatedActions);
     return;
-  }
+  } 
 
   if (!configPath) {
     throw new Error('configPath is required, if service does not exist. provide your config in configPath, to autocreate/update service');
+  }
+
+  if (!validateConfig(config)) {
+    throw new Error('config is not valid, see messages above');
   }
 
   await d2cApi.updateService(config, service);
