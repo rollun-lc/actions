@@ -263,7 +263,7 @@ class D2cApiClient extends D2CBasicClient {
 
     const envVarPattern = /\$\{(.+?)\}/gm;
     for (const { name, value } of env) {
-      let castedValue = `${value || ''}`;
+      let castedValue = value === undefined ? '' : `${value}`;
       if (!envVarPattern.test(castedValue)) {
         // env does not contain reference to env var like ${TEST_ENV}
         resolvedEnvs.push({ name, value: castedValue });
