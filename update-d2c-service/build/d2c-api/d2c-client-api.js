@@ -270,6 +270,7 @@ class D2cApiClient extends D2CBasicClient {
                 await this.awaitServiceAction(service.id);
             }
             else {
+                await this.triggerServiceUpdate(service.id);
                 core.info('no changes to the service, skip update');
             }
         }

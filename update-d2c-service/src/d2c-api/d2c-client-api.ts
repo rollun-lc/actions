@@ -357,6 +357,7 @@ class D2cApiClient extends D2CBasicClient {
         await this.api.put(`/v1/service/${type}/${service.id}`, payload);
         await this.awaitServiceAction(service.id);
       } else {
+        await this.triggerServiceUpdate(service.id)
         core.info('no changes to the service, skip update');
       }
     } else {
