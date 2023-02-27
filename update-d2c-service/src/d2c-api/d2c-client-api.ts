@@ -354,12 +354,13 @@ class D2cApiClient extends D2CBasicClient {
 
     if (service) {
       if (!_.isMatch(service, payload)) {
+        core.info('detected changes in config, updating service');
         await this.api.put(`/v1/service/${type}/${service.id}`, payload);
-        await this.awaitServiceAction(service.id);
       } else {
-        await this.triggerServiceUpdate(service.id)
-        core.info('no changes to the service, skip update');
+        core.info('no changes in config, triggering service update');
+        await this.triggerServiceUpdate(service.id);
       }
+        await this.awaitServiceAction(service.id);
     } else {
       const { data } = await this.api.post(`/v1/service/${type}`, payload);
       const serviceId = data.result.id;

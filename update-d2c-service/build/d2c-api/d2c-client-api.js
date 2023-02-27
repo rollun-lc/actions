@@ -266,13 +266,14 @@ class D2cApiClient extends D2CBasicClient {
         core.info(JSON.stringify({ ...payload, env: '*** reducted ***' }));
         if (service) {
             if (!lodash_1.default.isMatch(service, payload)) {
+                core.info('detected changes in config, updating service');
                 await this.api.put(`/v1/service/${type}/${service.id}`, payload);
-                await this.awaitServiceAction(service.id);
             }
             else {
+                core.info('no changes in config, triggering service update');
                 await this.triggerServiceUpdate(service.id);
-                core.info('no changes to the service, skip update');
             }
+            await this.awaitServiceAction(service.id);
         }
         else {
             const { data } = await this.api.post(`/v1/service/${type}`, payload);
