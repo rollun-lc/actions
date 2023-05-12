@@ -14,7 +14,6 @@ class SmApi {
         this.auth = auth;
         this.baseUrl = baseUrl;
         this.api = axios_1.default.create({
-            baseURL: this.baseUrl,
             auth: {
                 username: this.auth.username,
                 password: this.auth.password,
@@ -31,7 +30,7 @@ class SmApi {
             .map((env) => env.value.replace('sm://', ''));
         const query = new rollun_ts_rql_1.Query().setQuery(new rollun_ts_rql_1.In('key', secretsNames));
         try {
-            const { data: secrets } = await this.api.get(`?${query.toString()}`);
+            const { data: secrets } = await this.api.get(`${this.baseUrl}?${query.toString()}`);
             const envsWithSecrets = envs.map((env) => {
                 if (!env.value.startsWith('sm://')) {
                     return env;

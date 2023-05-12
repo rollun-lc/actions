@@ -10,7 +10,6 @@ export class SmApi {
     private baseUrl = 'https://rollun.net/api/datastore/Secrets',
   ) {
     this.api = axios.create({
-      baseURL: this.baseUrl,
       auth: {
         username: this.auth.username,
         password: this.auth.password,
@@ -36,7 +35,7 @@ export class SmApi {
     try {
       const { data: secrets } = await this.api.get<
         { key: string; value: string }[]
-      >(`?${query.toString()}`);
+      >(`${this.baseUrl}?${query.toString()}`);
 
       const envsWithSecrets = envs.map((env) => {
         if (!env.value.startsWith('sm://')) {
