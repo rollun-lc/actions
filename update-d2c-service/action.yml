@@ -15,10 +15,10 @@ inputs:
     required: true
   sm-user:
     description: 'Username to get secrets from secret manager'
-    required: true
+    required: false
   sm-password:
     description: 'Password to get secrets from secret manager'
-    required: true
+    required: false
   d2c-base-api-url:
     description: 'Base path of d2c api'
     required: false
