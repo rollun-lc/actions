@@ -3,6 +3,7 @@ import { validateActions } from './utils';
 import * as YAML from 'yaml';
 import fs from 'fs';
 import { validateConfig } from './validate-config';
+import { SmApi } from './sm-api/sm-api';
 
 type UpdateServiceParams = {
   serviceName: string;
@@ -11,6 +12,8 @@ type UpdateServiceParams = {
   password: string;
   commaSeparatedActions: string;
   d2cBaseApiUrl: string;
+  smUsername?: string;
+  smPassword?: string;
 };
 
 const updateService = async ({
@@ -20,30 +23,46 @@ const updateService = async ({
   commaSeparatedActions,
   password,
   d2cBaseApiUrl,
+  smUsername,
+  smPassword,
 }: UpdateServiceParams) => {
   validateActions(commaSeparatedActions);
 
   // fallback to serviceName, if no config provided
-  const config = configPath 
+  const config = configPath
     ? YAML.parse(fs.readFileSync(configPath, 'utf8'))
     : { 'd2c-service-config': { name: serviceName } };
 
   const d2cApi = await createD2cApiWithAuth({ email, password, d2cBaseApiUrl });
-  const service = await d2cApi.fetchServiceByName(config['d2c-service-config'].name);
+  const service = await d2cApi.fetchServiceByName(
+    config['d2c-service-config'].name,
+  );
 
   // if service exists, but no config provided, just use old flow, and trigger update hook.
   if (service && !configPath) {
     await d2cApi.triggerServiceUpdate(service.id, commaSeparatedActions);
     return;
-  } 
+  }
 
   if (!configPath) {
-    throw new Error('configPath is required, if service does not exist. provide your config in configPath, to autocreate/update service');
+    throw new Error(
+      'configPath is required, if service does not exist. provide your config in configPath, to autocreate/update service',
+    );
   }
 
   if (!validateConfig(config)) {
     throw new Error('config is not valid, see messages above');
   }
+
+  if (!smPassword || !smUsername) {
+    throw new Error('smPassword and smUsername are required');
+  }
+
+  const smApi = new SmApi({
+    username: smUsername,
+    password: smPassword,
+  });
+  const configWithSecretValues = await smApi.populateConfigWithSecrets(config);
 
   await d2cApi.updateService(config, service);
 };

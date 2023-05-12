@@ -28,7 +28,8 @@ const utils_1 = require("./utils");
 const YAML = __importStar(require("yaml"));
 const fs_1 = __importDefault(require("fs"));
 const validate_config_1 = require("./validate-config");
-const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, }) => {
+const sm_api_1 = require("./sm-api/sm-api");
+const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, smUsername, smPassword, }) => {
     (0, utils_1.validateActions)(commaSeparatedActions);
     // fallback to serviceName, if no config provided
     const config = configPath
@@ -47,6 +48,14 @@ const updateService = async ({ serviceName, configPath, email, commaSeparatedAct
     if (!(0, validate_config_1.validateConfig)(config)) {
         throw new Error('config is not valid, see messages above');
     }
+    if (!smPassword || !smUsername) {
+        throw new Error('smPassword and smUsername are required');
+    }
+    const smApi = new sm_api_1.SmApi({
+        username: smUsername,
+        password: smPassword,
+    });
+    const configWithSecretValues = await smApi.populateConfigWithSecrets(config);
     await d2cApi.updateService(config, service);
 };
 exports.updateService = updateService;

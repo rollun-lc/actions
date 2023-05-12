@@ -5,6 +5,8 @@ declare type UpdateServiceParams = {
     password: string;
     commaSeparatedActions: string;
     d2cBaseApiUrl: string;
+    smUsername?: string;
+    smPassword?: string;
 };
-declare const updateService: ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, }: UpdateServiceParams) => Promise<void>;
+declare const updateService: ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, smUsername, smPassword, }: UpdateServiceParams) => Promise<void>;
 export { updateService };

@@ -37,6 +37,8 @@ const runAction = () => {
         password: core.getInput('d2c-password'),
         d2cBaseApiUrl: core.getInput('d2c-base-api-url'),
         commaSeparatedActions: core.getInput('actions'),
+        smPassword: core.getInput('sm-password'),
+        smUsername: core.getInput('sm-username'),
     }));
 };
 runAction();

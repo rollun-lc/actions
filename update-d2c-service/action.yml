@@ -13,6 +13,12 @@ inputs:
   d2c-password:
     description: 'Password of d2c account'
     required: true
+  sm-user:
+    description: 'Username to get secrets from secret manager'
+    required: true
+  sm-password:
+    description: 'Password to get secrets from secret manager'
+    required: true
   d2c-base-api-url:
     description: 'Base path of d2c api'
     required: false
