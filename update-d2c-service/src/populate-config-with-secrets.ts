@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export async function populateConfigWithSecrets(
   config: D2CServiceConfig,
-  auth: { username: string; password: string },
+  auth: { username?: string; password?: string },
   baseUrl = 'https://rollun.net/api/datastore/Secrets',
 ) {
   const envs = config['d2c-service-config'].env || [];
@@ -17,13 +17,21 @@ export async function populateConfigWithSecrets(
     .filter((env) => env.value.startsWith('sm://'))
     .map((env) => env.value.replace('sm://', ''));
 
+  if (secretsNames.length === 0) {
+    return config;
+  }
+
+  if (!auth.password || !auth.username) {
+    throw new Error('smPassword and smUsername are required');
+  }
+
   const query = new Query().setQuery(new In('key', secretsNames));
 
   try {
     const { data: secrets } = await axios.get<{ key: string; value: string }[]>(
       `${baseUrl}?${query.toString()}`,
       {
-        auth,
+        auth: auth as { username: string; password: string },
       },
     );
 

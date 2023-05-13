@@ -54,11 +54,7 @@ const updateService = async ({
     throw new Error('config is not valid, see messages above');
   }
 
-  if (!smPassword || !smUsername) {
-    throw new Error('smPassword and smUsername are required');
-  }
-
-  const configWithSecretValues = await populateConfigWithSecrets(config, {
+  await populateConfigWithSecrets(config, {
     username: smUsername,
     password: smPassword,
   });

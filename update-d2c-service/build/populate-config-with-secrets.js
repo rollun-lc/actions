@@ -14,10 +14,16 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     const secretsNames = envs
         .filter((env) => env.value.startsWith('sm://'))
         .map((env) => env.value.replace('sm://', ''));
+    if (secretsNames.length === 0) {
+        return config;
+    }
+    if (!auth.password || !auth.username) {
+        throw new Error('smPassword and smUsername are required');
+    }
     const query = new rollun_ts_rql_1.Query().setQuery(new rollun_ts_rql_1.In('key', secretsNames));
     try {
         const { data: secrets } = await axios_1.default.get(`${baseUrl}?${query.toString()}`, {
-            auth,
+            auth: auth,
         });
         config['d2c-service-config'].env = envs.map((env) => {
             if (!env.value.startsWith('sm://')) {
