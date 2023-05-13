@@ -3,7 +3,7 @@ import { validateActions } from './utils';
 import * as YAML from 'yaml';
 import fs from 'fs';
 import { validateConfig } from './validate-config';
-import { SmApi } from './sm-api/sm-api';
+import { populateConfigWithSecrets } from './populate-config-with-secrets';
 
 type UpdateServiceParams = {
   serviceName: string;
@@ -58,11 +58,10 @@ const updateService = async ({
     throw new Error('smPassword and smUsername are required');
   }
 
-  const smApi = new SmApi({
+  const configWithSecretValues = await populateConfigWithSecrets(config, {
     username: smUsername,
     password: smPassword,
   });
-  const configWithSecretValues = await smApi.populateConfigWithSecrets(config);
 
   await d2cApi.updateService(config, service);
 };

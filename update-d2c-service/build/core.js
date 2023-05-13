@@ -28,7 +28,7 @@ const utils_1 = require("./utils");
 const YAML = __importStar(require("yaml"));
 const fs_1 = __importDefault(require("fs"));
 const validate_config_1 = require("./validate-config");
-const sm_api_1 = require("./sm-api/sm-api");
+const populate_config_with_secrets_1 = require("./populate-config-with-secrets");
 const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, smUsername, smPassword, }) => {
     (0, utils_1.validateActions)(commaSeparatedActions);
     // fallback to serviceName, if no config provided
@@ -51,11 +51,10 @@ const updateService = async ({ serviceName, configPath, email, commaSeparatedAct
     if (!smPassword || !smUsername) {
         throw new Error('smPassword and smUsername are required');
     }
-    const smApi = new sm_api_1.SmApi({
+    const configWithSecretValues = await (0, populate_config_with_secrets_1.populateConfigWithSecrets)(config, {
         username: smUsername,
         password: smPassword,
     });
-    const configWithSecretValues = await smApi.populateConfigWithSecrets(config);
     await d2cApi.updateService(config, service);
 };
 exports.updateService = updateService;
