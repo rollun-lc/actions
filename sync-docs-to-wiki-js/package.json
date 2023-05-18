@@ -1,0 +1,25 @@
+{
+  "name": "sync-docs-to-wiki-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/github": "^4.0.0",
+    "@types/jest": "^26.0.20",
+    "axios": "^0.25.0",
+    "axios-retry": "^3.2.4",
+    "glob": "^10.2.5",
+    "graphql-request": "^6.0.0",
+    "parse-md": "^3.0.3",
+    "qs": "^6.10.3",
+    "typescript": "^4.1.3",
+    "yaml": "^2.2.2"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

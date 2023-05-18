@@ -1,0 +1,20 @@
+name: 'Sync docs from github repository to wiki-js'
+description: 'This action takes all files from current github repository and syncs them to wiki-js'
+inputs:
+  api-key:
+    description: 'API key for wiki-js'
+    required: true
+  wiki-js-graphql-url:
+    description: 'Wiki-js graphql url'
+    required: true
+  docs-config-path:
+    description: 'Path to docs config file'
+    required: false
+    default: 'docs-config.yaml'
+  dry-run:
+    description: 'Dry run'
+    required: false
+    default: 'false'
+runs:
+  using: 'node16'
+  main: 'build/index.js'
