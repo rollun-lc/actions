@@ -1,7 +1,7 @@
 type MdFileMetadata = {
     tags: string;
-    title: string;
-    description: string;
+    title?: string;
+    description?: string;
     isPrivate?: boolean;
     isPublished?: boolean;
     locale?: string;

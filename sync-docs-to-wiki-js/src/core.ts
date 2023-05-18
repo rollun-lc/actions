@@ -62,13 +62,13 @@ export async function syncDocsToWikiJs({
 
     const updateOrCreatePage = {
       content,
-      description: metadata.description,
+      description: metadata.description ?? '',
       isPrivate: metadata.isPrivate ?? false,
       isPublished: metadata.isPublished ?? true,
       locale: metadata.locale ?? 'en',
       path: metadata.path ?? pathWithoutExt,
       tags,
-      title: metadata.title,
+      title: metadata.title ?? pathWithoutExt,
     };
 
     if (!wikiPage) {

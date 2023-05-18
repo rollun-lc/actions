@@ -1,7 +1,7 @@
 type MdFileMetadata = {
   tags: string;
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   isPrivate?: boolean;
   isPublished?: boolean;
   locale?: string;
@@ -21,11 +21,11 @@ export function validateMdFileMetadata(
     errors.push('metadata.tags must be a string separated by commas');
   }
 
-  if (typeof metadata.title !== 'string') {
+  if (metadata.title && typeof metadata.title !== 'string') {
     errors.push('metadata.title must be a string');
   }
 
-  if (typeof metadata.description !== 'string') {
+  if (metadata.description && typeof metadata.description !== 'string') {
     errors.push('metadata.description must be a string');
   }
 

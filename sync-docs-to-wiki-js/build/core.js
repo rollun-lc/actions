@@ -65,13 +65,13 @@ async function syncDocsToWikiJs({ apiKey, baseUrl, docsConfigPath, dryRun = fals
         const tags = metadata.tags?.split(',').map((tag) => tag.trim()) ?? [];
         const updateOrCreatePage = {
             content,
-            description: metadata.description,
+            description: metadata.description ?? '',
             isPrivate: metadata.isPrivate ?? false,
             isPublished: metadata.isPublished ?? true,
             locale: metadata.locale ?? 'en',
             path: metadata.path ?? pathWithoutExt,
             tags,
-            title: metadata.title,
+            title: metadata.title ?? pathWithoutExt,
         };
         if (!wikiPage) {
             core.info(`Page ${pathWithoutExt} does not exist, creating`);
