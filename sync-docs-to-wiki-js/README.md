@@ -13,7 +13,7 @@ How it works:
 |-----------------------|-------------------------------------------------------|
 | `api-key`             | Api key for wiki-js api                               |
 | `wiki-js-graphql-url` | Wiki-js graphql url                                   |
-| `docs-config-path`    | Path to docs config file. Default: `docs-config.json` |
+| `docs-config-path`    | Path to docs config file. Default: `docs-config.yaml` |
 | `dry-run`             | If 'true', will not run any mutations on wiki js      |
 
 ## Example usage
@@ -23,7 +23,7 @@ How it works:
         with:
           api-key: ${{ secrets.WIKI_JS_API_KEY }}
           wiki-js-graphql-url: https://wiki.rollun.net/graphql
-          docs-config-path: docs-config.json
+          docs-config-path: docs-config.yaml
           dry-run: 'false'
 ```
 
