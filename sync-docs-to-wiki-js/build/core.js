@@ -45,8 +45,9 @@ async function syncDocsToWikiJs({ apiKey, baseUrl, docsConfigPath, dryRun = fals
         nodir: true,
         ignore: ['node_modules/**'],
     });
-    const includeFiles = await (0, glob_1.glob)(['docs/test/**', 'README.md'], {
+    const includeFiles = await (0, glob_1.glob)(docsConfig.config.include, {
         nodir: true,
+        ignore: docsConfig.config.ignore,
     });
     for (const file of allFiles) {
         const pathWithoutExt = file.replace('.md', '');

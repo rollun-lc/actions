@@ -36,8 +36,9 @@ export async function syncDocsToWikiJs({
     ignore: ['node_modules/**'],
   });
 
-  const includeFiles = await glob(['docs/test/**', 'README.md'], {
+  const includeFiles = await glob(docsConfig.config.include, {
     nodir: true,
+    ignore: docsConfig.config.ignore,
   });
 
   for (const file of allFiles) {
