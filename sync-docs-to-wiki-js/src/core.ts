@@ -54,7 +54,7 @@ export async function syncDocsToWikiJs({
     const fileContents = await readFile(file, 'utf8');
     const { metadata, content } = parseMD(fileContents);
 
-    const wikiPage = await wikiJsApi.getPageByName(pathWithoutExt);
+    const wikiPage = await wikiJsApi.getPageByNameSafe(pathWithoutExt);
 
     validateMdFileMetadata(metadata);
 

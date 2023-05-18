@@ -60,7 +60,7 @@ async function syncDocsToWikiJs({ apiKey, baseUrl, docsConfigPath, dryRun = fals
         }
         const fileContents = await (0, promises_1.readFile)(file, 'utf8');
         const { metadata, content } = (0, parse_md_1.default)(fileContents);
-        const wikiPage = await wikiJsApi.getPageByName(pathWithoutExt);
+        const wikiPage = await wikiJsApi.getPageByNameSafe(pathWithoutExt);
         (0, validate_md_file_metadata_1.validateMdFileMetadata)(metadata);
         const tags = metadata.tags?.split(',').map((tag) => tag.trim()) ?? [];
         const updateOrCreatePage = {
