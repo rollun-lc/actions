@@ -34,12 +34,11 @@ const glob_1 = require("glob");
 const wiki_js_api_1 = require("./wiki-js-api");
 const parse_md_1 = __importDefault(require("parse-md"));
 const core = __importStar(require("@actions/core"));
+const validate_md_file_metadata_1 = require("./validate-md-file-metadata");
 async function syncDocsToWikiJs({ apiKey, baseUrl, docsConfigPath, dryRun = false, }) {
     const docsConfig = YAML.parse(await (0, promises_1.readFile)(docsConfigPath, 'utf8'));
     (0, validate_docs_config_1.validateDocsConfig)(docsConfig);
     const wikiJsApi = new wiki_js_api_1.WikiJsApi(apiKey, baseUrl);
-    // performing manual sync, to make sure that all files are up to date
-    await wikiJsApi.syncFromGithub();
     // getting all files, to delete the ones that are not included in config
     const allFiles = await (0, glob_1.glob)(['**/*'], {
         nodir: true,
@@ -60,16 +59,35 @@ async function syncDocsToWikiJs({ apiKey, baseUrl, docsConfigPath, dryRun = fals
             continue;
         }
         const fileContents = await (0, promises_1.readFile)(file, 'utf8');
-        const { metadata } = (0, parse_md_1.default)(fileContents);
-        const tags = metadata.tags
-            ?.split(',')
-            .map((tag) => tag.trim()) ?? [];
+        const { metadata, content } = (0, parse_md_1.default)(fileContents);
         const wikiPage = await wikiJsApi.getPageByName(pathWithoutExt);
+        (0, validate_md_file_metadata_1.validateMdFileMetadata)(metadata);
+        const tags = metadata.tags?.split(',').map((tag) => tag.trim()) ?? [];
+        const updateOrCreatePage = {
+            content,
+            description: metadata.description,
+            isPrivate: metadata.isPrivate ?? false,
+            isPublished: metadata.isPublished ?? true,
+            locale: metadata.locale ?? 'en',
+            path: metadata.path ?? pathWithoutExt,
+            tags,
+            title: metadata.title,
+        };
+        if (!wikiPage) {
+            core.info(`Page ${pathWithoutExt} does not exist, creating`);
+            if (dryRun) {
+                core.info(`Dry run, skipping creating page ${pathWithoutExt}`);
+                continue;
+            }
+            await wikiJsApi.createPage(updateOrCreatePage);
+            core.info(`Page ${pathWithoutExt} created`);
+            continue;
+        }
         if (dryRun) {
             core.info(`Dry run, skipping updating page ${wikiPage.path} with tags ${tags}`);
             continue;
         }
-        await wikiJsApi.updatePageWithTags(wikiPage.id, tags);
+        await wikiJsApi.updatePageWithTags(wikiPage.id, updateOrCreatePage);
         core.info(`Page ${wikiPage.path} updated with tags ${tags}`);
     }
 }

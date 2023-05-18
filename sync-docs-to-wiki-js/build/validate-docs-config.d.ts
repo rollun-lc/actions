@@ -5,3 +5,4 @@ export type DocsConfig = {
     };
 };
 export declare function validateDocsConfig(config: any): config is DocsConfig;
+export declare function isRequired(value: any): boolean;

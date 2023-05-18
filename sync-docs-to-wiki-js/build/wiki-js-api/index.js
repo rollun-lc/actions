@@ -15,25 +15,73 @@ class WikiJsApi {
             },
         });
     }
-    async syncFromGithub() {
-        const query = (0, graphql_request_1.gql) `
-      mutation ($targetKey: String!, $handler: String!) {
-        storage {
-          executeAction(targetKey: $targetKey, handler: $handler) {
+    async createPage(page) {
+        const createPageQuery = (0, graphql_request_1.gql) `
+      mutation (
+        $content: String!
+        $description: String!
+        $editor: String!
+        $isPrivate: Boolean!
+        $isPublished: Boolean!
+        $locale: String!
+        $path: String!
+        $publishEndDate: Date
+        $publishStartDate: Date
+        $scriptCss: String
+        $scriptJs: String
+        $tags: [String]!
+        $title: String!
+      ) {
+        pages {
+          create(
+            content: $content
+            description: $description
+            editor: $editor
+            isPrivate: $isPrivate
+            isPublished: $isPublished
+            locale: $locale
+            path: $path
+            publishEndDate: $publishEndDate
+            publishStartDate: $publishStartDate
+            scriptCss: $scriptCss
+            scriptJs: $scriptJs
+            tags: $tags
+            title: $title
+          ) {
             responseResult {
               succeeded
               errorCode
               slug
               message
+              __typename
             }
+            page {
+              id
+              updatedAt
+              __typename
+            }
+            __typename
           }
+          __typename
         }
       }
     `;
-        await this.client.request(query, {
-            handler: 'sync',
-            targetKey: 'git',
+        await this.client.request(createPageQuery, {
+            ...page,
+            editor: 'markdown',
+            publishEndDate: '',
+            publishStartDate: '',
+            scriptCss: '',
+            scriptJs: '',
         });
+    }
+    async getPageByNameSafe(name) {
+        try {
+            return await this.getPageByName(name);
+        }
+        catch (e) {
+            return null;
+        }
     }
     async getPageByName(name) {
         const getPagesQuery = (0, graphql_request_1.gql) `
@@ -84,8 +132,7 @@ class WikiJsApi {
         }));
         return response.pages.single;
     }
-    async updatePageWithTags(pageId, tags) {
-        const fullPage = await this.getPageById(pageId);
+    async updatePageWithTags(pageId, page) {
         const updatePageQuery = (0, graphql_request_1.gql) `
       mutation (
         $id: Int!
@@ -138,8 +185,12 @@ class WikiJsApi {
       }
     `;
         await this.client.request(updatePageQuery, {
-            ...fullPage,
-            tags,
+            ...page,
+            editor: 'markdown',
+            publishEndDate: '',
+            publishStartDate: '',
+            scriptCss: '',
+            scriptJs: '',
         });
     }
     async tryDeletePage(name) {
@@ -165,10 +216,9 @@ class WikiJsApi {
             await this.client.request(deletePageQuery, {
                 id: page.id,
             });
-            console.log(`Page ${name} deleted`);
         }
         catch (e) {
-            console.log(`Page ${name} not found`);
+            // ignore
         }
     }
 }

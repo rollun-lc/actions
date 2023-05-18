@@ -39,7 +39,7 @@ export function validateDocsConfig(config: any): config is DocsConfig {
   return true;
 }
 
-function isRequired(value: any): boolean {
+export function isRequired(value: any): boolean {
   return value !== undefined && value !== null;
 }
 

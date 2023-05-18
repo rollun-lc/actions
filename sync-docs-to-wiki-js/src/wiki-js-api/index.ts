@@ -1,5 +1,16 @@
 import { gql, GraphQLClient } from 'graphql-request';
 
+export type UpdateOrCreatePageOptions = {
+  content: string;
+  description: string;
+  isPrivate: boolean;
+  isPublished: boolean;
+  locale: string;
+  path: string;
+  tags: string[];
+  title: string;
+};
+
 export class WikiJsApi {
   private readonly client: GraphQLClient;
 
@@ -14,29 +25,77 @@ export class WikiJsApi {
     });
   }
 
-  async syncFromGithub() {
-    const query = gql`
-      mutation ($targetKey: String!, $handler: String!) {
-        storage {
-          executeAction(targetKey: $targetKey, handler: $handler) {
+  async createPage(page: UpdateOrCreatePageOptions) {
+    const createPageQuery = gql`
+      mutation (
+        $content: String!
+        $description: String!
+        $editor: String!
+        $isPrivate: Boolean!
+        $isPublished: Boolean!
+        $locale: String!
+        $path: String!
+        $publishEndDate: Date
+        $publishStartDate: Date
+        $scriptCss: String
+        $scriptJs: String
+        $tags: [String]!
+        $title: String!
+      ) {
+        pages {
+          create(
+            content: $content
+            description: $description
+            editor: $editor
+            isPrivate: $isPrivate
+            isPublished: $isPublished
+            locale: $locale
+            path: $path
+            publishEndDate: $publishEndDate
+            publishStartDate: $publishStartDate
+            scriptCss: $scriptCss
+            scriptJs: $scriptJs
+            tags: $tags
+            title: $title
+          ) {
             responseResult {
               succeeded
               errorCode
               slug
               message
+              __typename
             }
+            page {
+              id
+              updatedAt
+              __typename
+            }
+            __typename
           }
+          __typename
         }
       }
     `;
 
-    await this.client.request(query, {
-      handler: 'sync',
-      targetKey: 'git',
+    await this.client.request(createPageQuery, {
+      ...page,
+      editor: 'markdown',
+      publishEndDate: '',
+      publishStartDate: '',
+      scriptCss: '',
+      scriptJs: '',
     });
   }
 
-  async getPageByName(name) {
+  async getPageByNameSafe(name: string) {
+    try {
+      return await this.getPageByName(name);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getPageByName(name: string) {
     const getPagesQuery = gql`
       {
         pages {
@@ -69,7 +128,7 @@ export class WikiJsApi {
     return page;
   }
 
-  async getPageById(id) {
+  async getPageById(id: string) {
     const getPageByIdQuery = gql`
       query ($id: Int!) {
         pages {
@@ -107,8 +166,7 @@ export class WikiJsApi {
     return response.pages.single;
   }
 
-  async updatePageWithTags(pageId, tags) {
-    const fullPage = await this.getPageById(pageId);
+  async updatePageWithTags(pageId: number, page: UpdateOrCreatePageOptions) {
     const updatePageQuery = gql`
       mutation (
         $id: Int!
@@ -162,12 +220,16 @@ export class WikiJsApi {
     `;
 
     await this.client.request(updatePageQuery, {
-      ...fullPage,
-      tags,
+      ...page,
+      editor: 'markdown',
+      publishEndDate: '',
+      publishStartDate: '',
+      scriptCss: '',
+      scriptJs: '',
     });
   }
 
-  async tryDeletePage(name) {
+  async tryDeletePage(name: string) {
     try {
       const page = await this.getPageByName(name);
 
@@ -192,10 +254,8 @@ export class WikiJsApi {
       await this.client.request(deletePageQuery, {
         id: page.id,
       });
-
-      console.log(`Page ${name} deleted`);
     } catch (e) {
-      console.log(`Page ${name} not found`);
+      // ignore
     }
   }
 }

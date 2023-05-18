@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateDocsConfig = void 0;
+exports.isRequired = exports.validateDocsConfig = void 0;
 function validateDocsConfig(config) {
     let errors = [];
     if (!isRequired(config)) {
@@ -30,6 +30,7 @@ exports.validateDocsConfig = validateDocsConfig;
 function isRequired(value) {
     return value !== undefined && value !== null;
 }
+exports.isRequired = isRequired;
 function isArrayOf(value, type) {
     if (!Array.isArray(value)) {
         return false;

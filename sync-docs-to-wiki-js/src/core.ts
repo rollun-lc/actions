@@ -5,6 +5,7 @@ import { glob } from 'glob';
 import { WikiJsApi } from './wiki-js-api';
 import parseMD from 'parse-md';
 import * as core from '@actions/core';
+import { validateMdFileMetadata } from './validate-md-file-metadata';
 
 type SyncDocToWikiJsParams = {
   apiKey: string;
@@ -26,9 +27,6 @@ export async function syncDocsToWikiJs({
   validateDocsConfig(docsConfig);
 
   const wikiJsApi = new WikiJsApi(apiKey, baseUrl);
-
-  // performing manual sync, to make sure that all files are up to date
-  await wikiJsApi.syncFromGithub();
 
   // getting all files, to delete the ones that are not included in config
   const allFiles = await glob(['**/*'], {
@@ -54,12 +52,36 @@ export async function syncDocsToWikiJs({
     }
 
     const fileContents = await readFile(file, 'utf8');
-    const { metadata } = parseMD(fileContents);
-    const tags =
-      (metadata as { tags?: string }).tags
-        ?.split(',')
-        .map((tag) => tag.trim()) ?? [];
+    const { metadata, content } = parseMD(fileContents);
+
     const wikiPage = await wikiJsApi.getPageByName(pathWithoutExt);
+
+    validateMdFileMetadata(metadata);
+
+    const tags = metadata.tags?.split(',').map((tag) => tag.trim()) ?? [];
+
+    const updateOrCreatePage = {
+      content,
+      description: metadata.description,
+      isPrivate: metadata.isPrivate ?? false,
+      isPublished: metadata.isPublished ?? true,
+      locale: metadata.locale ?? 'en',
+      path: metadata.path ?? pathWithoutExt,
+      tags,
+      title: metadata.title,
+    };
+
+    if (!wikiPage) {
+      core.info(`Page ${pathWithoutExt} does not exist, creating`);
+      if (dryRun) {
+        core.info(`Dry run, skipping creating page ${pathWithoutExt}`);
+        continue;
+      }
+
+      await wikiJsApi.createPage(updateOrCreatePage);
+      core.info(`Page ${pathWithoutExt} created`);
+      continue;
+    }
 
     if (dryRun) {
       core.info(
@@ -68,7 +90,7 @@ export async function syncDocsToWikiJs({
       continue;
     }
 
-    await wikiJsApi.updatePageWithTags(wikiPage.id, tags);
+    await wikiJsApi.updatePageWithTags(wikiPage.id, updateOrCreatePage);
     core.info(`Page ${wikiPage.path} updated with tags ${tags}`);
   }
 }
