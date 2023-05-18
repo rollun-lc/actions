@@ -1,4 +1,4 @@
-export declare type DocsConfig = {
+export type DocsConfig = {
     config: {
         include: string[];
         ignore: string[];

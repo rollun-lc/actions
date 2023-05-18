@@ -1,4 +1,4 @@
-declare type SyncDocToWikiJsParams = {
+type SyncDocToWikiJsParams = {
     apiKey: string;
     baseUrl: string;
     docsConfigPath: string;
