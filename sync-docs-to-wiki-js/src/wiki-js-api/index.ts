@@ -220,6 +220,7 @@ export class WikiJsApi {
     `;
 
     await this.client.request(updatePageQuery, {
+      id: pageId,
       ...page,
       editor: 'markdown',
       publishEndDate: '',
