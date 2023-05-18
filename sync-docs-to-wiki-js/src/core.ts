@@ -27,6 +27,9 @@ export async function syncDocsToWikiJs({
 
   const wikiJsApi = new WikiJsApi(apiKey, baseUrl);
 
+  // performing manual sync, to make sure that all files are up to date
+  await wikiJsApi.syncFromGithub();
+
   // getting all files, to delete the ones that are not included in config
   const allFiles = await glob(['**/*'], {
     nodir: true,

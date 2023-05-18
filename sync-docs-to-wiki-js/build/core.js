@@ -38,6 +38,8 @@ async function syncDocsToWikiJs({ apiKey, baseUrl, docsConfigPath, dryRun = fals
     const docsConfig = YAML.parse(await (0, promises_1.readFile)(docsConfigPath, 'utf8'));
     (0, validate_docs_config_1.validateDocsConfig)(docsConfig);
     const wikiJsApi = new wiki_js_api_1.WikiJsApi(apiKey, baseUrl);
+    // performing manual sync, to make sure that all files are up to date
+    await wikiJsApi.syncFromGithub();
     // getting all files, to delete the ones that are not included in config
     const allFiles = await (0, glob_1.glob)(['**/*'], {
         nodir: true,
