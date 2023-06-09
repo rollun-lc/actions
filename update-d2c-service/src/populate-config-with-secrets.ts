@@ -1,11 +1,10 @@
 import { D2CServiceConfig } from './d2c-api/types';
-import { In, Query } from 'rollun-ts-rql';
-import axios from 'axios';
+import { getSecretValue } from './get-secret-value';
 
 export async function populateConfigWithSecrets(
   config: D2CServiceConfig,
   auth: { username?: string; password?: string },
-  baseUrl = 'https://rollun.net/api/datastore/Secrets',
+  baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/',
 ) {
   const envs = config['d2c-service-config'].env || [];
 
@@ -24,36 +23,27 @@ export async function populateConfigWithSecrets(
   if (!auth.password || !auth.username) {
     throw new Error('smPassword and smUsername are required');
   }
-
-  const query = new Query().setQuery(new In('key', secretsNames));
-
   try {
-    const { data: secrets } = await axios.get<{ key: string; value: string }[]>(
-      `${baseUrl}?${query.toString()}`,
-      {
-        auth: auth as { username: string; password: string },
-      },
-    );
+    const envs: { name: string; value: string }[] = [];
 
-    config['d2c-service-config'].env = envs.map((env) => {
+    for (const env of config['d2c-service-config'].env || []) {
       if (!env.value.startsWith('sm://')) {
-        return env;
+        return envs.push(env);
       }
 
-      const secret = secrets.find(
-        (s) => s.key === env.value.replace('sm://', ''),
+      const secretValue = await getSecretValue(
+        env.value.replace('sm://', ''),
+        baseUrl,
+        auth,
       );
 
-      if (!secret) {
-        throw new Error(`Secret ${env.value} not found`);
-      }
-
-      return {
+      envs.push({
         ...env,
-        value: secret.value,
-      };
-    });
+        value: secretValue,
+      });
+    }
 
+    config['d2c-service-config'].env = envs;
     return config;
   } catch (e) {
     throw new Error('failed to fetch secrets: ' + (e as Error).message);

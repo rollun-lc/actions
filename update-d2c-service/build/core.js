@@ -29,7 +29,7 @@ const YAML = __importStar(require("yaml"));
 const fs_1 = __importDefault(require("fs"));
 const validate_config_1 = require("./validate-config");
 const populate_config_with_secrets_1 = require("./populate-config-with-secrets");
-const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, smUsername, smPassword, }) => {
+const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, smUsername, smPassword, smUrl, }) => {
     (0, utils_1.validateActions)(commaSeparatedActions);
     // fallback to serviceName, if no config provided
     const config = configPath
@@ -51,7 +51,7 @@ const updateService = async ({ serviceName, configPath, email, commaSeparatedAct
     await (0, populate_config_with_secrets_1.populateConfigWithSecrets)(config, {
         username: smUsername,
         password: smPassword,
-    });
+    }, smUrl);
     await d2cApi.updateService(config, service);
 };
 exports.updateService = updateService;

@@ -14,6 +14,7 @@ type UpdateServiceParams = {
   d2cBaseApiUrl: string;
   smUsername?: string;
   smPassword?: string;
+  smUrl: string;
 };
 
 const updateService = async ({
@@ -25,6 +26,7 @@ const updateService = async ({
   d2cBaseApiUrl,
   smUsername,
   smPassword,
+  smUrl,
 }: UpdateServiceParams) => {
   validateActions(commaSeparatedActions);
 
@@ -54,10 +56,14 @@ const updateService = async ({
     throw new Error('config is not valid, see messages above');
   }
 
-  await populateConfigWithSecrets(config, {
-    username: smUsername,
-    password: smPassword,
-  });
+  await populateConfigWithSecrets(
+    config,
+    {
+      username: smUsername,
+      password: smPassword,
+    },
+    smUrl,
+  );
 
   await d2cApi.updateService(config, service);
 };

@@ -20,6 +20,7 @@ const runAction = () => {
       commaSeparatedActions: core.getInput('actions'),
       smPassword: core.getInput('sm-password'),
       smUsername: core.getInput('sm-user'),
+      smUrl: core.getInput('sm-url'),
     }),
   );
 };

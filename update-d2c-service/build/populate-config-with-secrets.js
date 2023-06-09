@@ -1,12 +1,8 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.populateConfigWithSecrets = void 0;
-const rollun_ts_rql_1 = require("rollun-ts-rql");
-const axios_1 = __importDefault(require("axios"));
-async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun.net/api/datastore/Secrets') {
+const get_secret_value_1 = require("./get-secret-value");
+async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/') {
     const envs = config['d2c-service-config'].env || [];
     if (envs.length === 0) {
         return config;
@@ -20,24 +16,19 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     if (!auth.password || !auth.username) {
         throw new Error('smPassword and smUsername are required');
     }
-    const query = new rollun_ts_rql_1.Query().setQuery(new rollun_ts_rql_1.In('key', secretsNames));
     try {
-        const { data: secrets } = await axios_1.default.get(`${baseUrl}?${query.toString()}`, {
-            auth: auth,
-        });
-        config['d2c-service-config'].env = envs.map((env) => {
+        const envs = [];
+        for (const env of config['d2c-service-config'].env || []) {
             if (!env.value.startsWith('sm://')) {
-                return env;
+                return envs.push(env);
             }
-            const secret = secrets.find((s) => s.key === env.value.replace('sm://', ''));
-            if (!secret) {
-                throw new Error(`Secret ${env.value} not found`);
-            }
-            return {
+            const secretValue = await (0, get_secret_value_1.getSecretValue)(env.value.replace('sm://', ''), baseUrl, auth);
+            envs.push({
                 ...env,
-                value: secret.value,
-            };
-        });
+                value: secretValue,
+            });
+        }
+        config['d2c-service-config'].env = envs;
         return config;
     }
     catch (e) {

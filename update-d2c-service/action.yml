@@ -19,6 +19,10 @@ inputs:
   sm-password:
     description: 'Password to get secrets from secret manager'
     required: false
+  sm-url:
+    description: 'Url to get secrets from secret manager'
+    required: false
+    default: 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/'
   d2c-base-api-url:
     description: 'Base path of d2c api'
     required: false
