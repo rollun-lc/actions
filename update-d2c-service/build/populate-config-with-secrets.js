@@ -10,6 +10,7 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     const secretsNames = envs
         .filter((env) => env.value.startsWith('sm://'))
         .map((env) => env.value.replace('sm://', ''));
+    console.log('secretsNames', secretsNames);
     if (secretsNames.length === 0) {
         return config;
     }
@@ -18,7 +19,9 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     }
     try {
         const envs = [];
+        console.log(config['d2c-service-config'].env);
         for (const env of config['d2c-service-config'].env || []) {
+            console.log('env', env);
             if (!env.value.startsWith('sm://')) {
                 return envs.push(env);
             }
