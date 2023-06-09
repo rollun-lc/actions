@@ -16,7 +16,6 @@ export async function populateConfigWithSecrets(
     .filter((env) => env.value.startsWith('sm://'))
     .map((env) => env.value.replace('sm://', ''));
 
-  console.log('secretsNames', secretsNames);
   if (secretsNames.length === 0) {
     return config;
   }
@@ -27,12 +26,10 @@ export async function populateConfigWithSecrets(
   try {
     const envs: { name: string; value: string }[] = [];
 
-    console.log(config['d2c-service-config'].env);
-
     for (const env of config['d2c-service-config'].env || []) {
-      console.log('env', env);
       if (!env.value.startsWith('sm://')) {
-        return envs.push(env);
+        envs.push(env);
+        continue;
       }
 
       const secretValue = await getSecretValue(
