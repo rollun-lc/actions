@@ -1,6 +1,10 @@
 import { D2CServiceConfig } from './d2c-api/types';
 import { getSecretValue } from './get-secret-value';
 
+function isSecret(value: string | number) {
+  return typeof value === 'string' && value.startsWith('sm://');
+}
+
 export async function populateConfigWithSecrets(
   config: D2CServiceConfig,
   auth: { username?: string; password?: string },
@@ -13,7 +17,7 @@ export async function populateConfigWithSecrets(
   }
 
   const secretsNames = envs
-    .filter((env) => env.value.startsWith('sm://'))
+    .filter((env) => isSecret(env.value))
     .map((env) => env.value.replace('sm://', ''));
 
   if (secretsNames.length === 0) {
@@ -26,10 +30,8 @@ export async function populateConfigWithSecrets(
   try {
     const resultEnvs: { name: string; value: string }[] = [];
 
-    console.log(`envs: `, config['d2c-service-config'].env || []);
     for (const env of config['d2c-service-config'].env || []) {
-      console.log(`env: `, env);
-      if (!env.value.startsWith('sm://')) {
+      if (!isSecret(env.value)) {
         envs.push(env);
         continue;
       }

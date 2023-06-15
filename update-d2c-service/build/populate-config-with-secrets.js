@@ -2,13 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.populateConfigWithSecrets = void 0;
 const get_secret_value_1 = require("./get-secret-value");
+function isSecret(value) {
+    return typeof value === 'string' && value.startsWith('sm://');
+}
 async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/') {
     const envs = config['d2c-service-config'].env || [];
     if (envs.length === 0) {
         return config;
     }
     const secretsNames = envs
-        .filter((env) => env.value.startsWith('sm://'))
+        .filter((env) => isSecret(env.value))
         .map((env) => env.value.replace('sm://', ''));
     if (secretsNames.length === 0) {
         return config;
@@ -18,10 +21,8 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     }
     try {
         const resultEnvs = [];
-        console.log(`envs: `, config['d2c-service-config'].env || []);
         for (const env of config['d2c-service-config'].env || []) {
-            console.log(`env: `, env);
-            if (!env.value.startsWith('sm://')) {
+            if (!isSecret(env.value)) {
                 envs.push(env);
                 continue;
             }

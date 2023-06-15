@@ -36,5 +36,5 @@ inputs:
     default: 'updateSources,updateLocalDeps,updateGlobalDeps,updateVersion'
 
 runs:
-  using: 'node18'
+  using: 'node16'
   main: 'build/index.js'
