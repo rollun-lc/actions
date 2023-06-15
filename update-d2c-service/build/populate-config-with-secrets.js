@@ -18,7 +18,9 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     }
     try {
         const envs = [];
+        console.log(`envs: `, config['d2c-service-config'].env || []);
         for (const env of config['d2c-service-config'].env || []) {
+            console.log(`env: `, env);
             if (!env.value.startsWith('sm://')) {
                 envs.push(env);
                 continue;
