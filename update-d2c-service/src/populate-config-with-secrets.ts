@@ -29,28 +29,30 @@ export async function populateConfigWithSecrets(
     throw new Error('smPassword and smUsername are required');
   }
   try {
-    //   const resultEnvs: { name: string; value: string }[] = [];
-    //
-    //   for (const env of config['d2c-service-config'].env || []) {
-    //     if (!isSecret(env.value)) {
-    //       envs.push(env);
-    //       continue;
-    //     }
-    //
-    //     const secretValue = await getSecretValue(
-    //       env.value.replace('sm://', ''),
-    //       baseUrl,
-    //       auth,
-    //     );
-    //
-    //     resultEnvs.push({
-    //       ...env,
-    //       value: secretValue,
-    //     });
-    //   }
-    //
-    //   config['d2c-service-config'].env = resultEnvs;
-    //   return config;
+    const resultEnvs: { name: string; value: string }[] = [];
+
+    for (const env of config['d2c-service-config'].env || []) {
+      if (!isSecret(env.value)) {
+        resultEnvs.push(env);
+        continue;
+      }
+
+      resultEnvs.push(env);
+      //
+      //     const secretValue = await getSecretValue(
+      //       env.value.replace('sm://', ''),
+      //       baseUrl,
+      //       auth,
+      //     );
+      //
+      //     resultEnvs.push({
+      //       ...env,
+      //       value: secretValue,
+      //     });
+    }
+
+    config['d2c-service-config'].env = resultEnvs;
+    return config;
   } catch (e) {
     throw new Error('failed to fetch secrets: ' + (e as Error).message);
   }
