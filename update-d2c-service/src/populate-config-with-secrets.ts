@@ -12,6 +12,7 @@ export async function populateConfigWithSecrets(
     return config;
   }
 
+  console.log(`envs: `, envs);
   const secretsNames = envs
     .filter((env) => env.value.startsWith('sm://'))
     .map((env) => env.value.replace('sm://', ''));
@@ -24,7 +25,7 @@ export async function populateConfigWithSecrets(
     throw new Error('smPassword and smUsername are required');
   }
   try {
-    const envs: { name: string; value: string }[] = [];
+    const resultEnvs: { name: string; value: string }[] = [];
 
     console.log(`envs: `, config['d2c-service-config'].env || []);
     for (const env of config['d2c-service-config'].env || []) {
@@ -40,13 +41,13 @@ export async function populateConfigWithSecrets(
         auth,
       );
 
-      envs.push({
+      resultEnvs.push({
         ...env,
         value: secretValue,
       });
     }
 
-    config['d2c-service-config'].env = envs;
+    config['d2c-service-config'].env = resultEnvs;
     return config;
   } catch (e) {
     throw new Error('failed to fetch secrets: ' + (e as Error).message);

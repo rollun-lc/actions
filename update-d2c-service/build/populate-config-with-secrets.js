@@ -7,6 +7,7 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     if (envs.length === 0) {
         return config;
     }
+    console.log(`envs: `, envs);
     const secretsNames = envs
         .filter((env) => env.value.startsWith('sm://'))
         .map((env) => env.value.replace('sm://', ''));
@@ -17,7 +18,7 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
         throw new Error('smPassword and smUsername are required');
     }
     try {
-        const envs = [];
+        const resultEnvs = [];
         console.log(`envs: `, config['d2c-service-config'].env || []);
         for (const env of config['d2c-service-config'].env || []) {
             console.log(`env: `, env);
@@ -26,12 +27,12 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
                 continue;
             }
             const secretValue = await (0, get_secret_value_1.getSecretValue)(env.value.replace('sm://', ''), baseUrl, auth);
-            envs.push({
+            resultEnvs.push({
                 ...env,
                 value: secretValue,
             });
         }
-        config['d2c-service-config'].env = envs;
+        config['d2c-service-config'].env = resultEnvs;
         return config;
     }
     catch (e) {
