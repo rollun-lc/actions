@@ -6,23 +6,19 @@ function isSecret(value) {
 }
 async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/') {
     return config;
-    // const envs = config['d2c-service-config'].env || [];
-    //
-    // if (envs.length === 0) {
-    //   return config;
-    // }
-    //
-    // const secretsNames = envs
-    //   .filter((env) => isSecret(env.value))
-    //   .map((env) => env.value.replace('sm://', ''));
-    //
-    // if (secretsNames.length === 0) {
-    //   return config;
-    // }
-    //
-    // if (!auth.password || !auth.username) {
-    //   throw new Error('smPassword and smUsername are required');
-    // }
+    const envs = config['d2c-service-config'].env || [];
+    if (envs.length === 0) {
+        return config;
+    }
+    const secretsNames = envs
+        .filter((env) => isSecret(env.value))
+        .map((env) => env.value.replace('sm://', ''));
+    if (secretsNames.length === 0) {
+        return config;
+    }
+    if (!auth.password || !auth.username) {
+        throw new Error('smPassword and smUsername are required');
+    }
     try {
         //   const resultEnvs: { name: string; value: string }[] = [];
         //
