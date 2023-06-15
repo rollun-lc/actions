@@ -19,7 +19,6 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     if (!auth.password || !auth.username) {
         throw new Error('smPassword and smUsername are required');
     }
-    return config;
     try {
         const resultEnvs = [];
         for (const env of config['d2c-service-config'].env || []) {

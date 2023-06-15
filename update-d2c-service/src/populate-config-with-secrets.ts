@@ -28,7 +28,6 @@ export async function populateConfigWithSecrets(
     throw new Error('smPassword and smUsername are required');
   }
 
-  return config;
   try {
     const resultEnvs: { name: string; value: string }[] = [];
 
