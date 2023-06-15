@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.populateConfigWithSecrets = void 0;
+const get_secret_value_1 = require("./get-secret-value");
 function isSecret(value) {
     return typeof value === 'string' && value.startsWith('sm://');
 }
 async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/') {
-    return config;
     const envs = config['d2c-service-config'].env || [];
     if (envs.length === 0) {
         return config;
@@ -19,6 +19,7 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
     if (!auth.password || !auth.username) {
         throw new Error('smPassword and smUsername are required');
     }
+    return config;
     try {
         const resultEnvs = [];
         for (const env of config['d2c-service-config'].env || []) {
@@ -26,18 +27,11 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
                 resultEnvs.push(env);
                 continue;
             }
-            resultEnvs.push(env);
-            //
-            //     const secretValue = await getSecretValue(
-            //       env.value.replace('sm://', ''),
-            //       baseUrl,
-            //       auth,
-            //     );
-            //
-            //     resultEnvs.push({
-            //       ...env,
-            //       value: secretValue,
-            //     });
+            const secretValue = await (0, get_secret_value_1.getSecretValue)(env.value.replace('sm://', ''), baseUrl, auth);
+            resultEnvs.push({
+                ...env,
+                value: secretValue,
+            });
         }
         config['d2c-service-config'].env = resultEnvs;
         return config;

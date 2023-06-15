@@ -10,7 +10,6 @@ export async function populateConfigWithSecrets(
   auth: { username?: string; password?: string },
   baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/',
 ) {
-  return config;
   const envs = config['d2c-service-config'].env || [];
 
   if (envs.length === 0) {
@@ -28,6 +27,8 @@ export async function populateConfigWithSecrets(
   if (!auth.password || !auth.username) {
     throw new Error('smPassword and smUsername are required');
   }
+
+  return config;
   try {
     const resultEnvs: { name: string; value: string }[] = [];
 
@@ -37,18 +38,16 @@ export async function populateConfigWithSecrets(
         continue;
       }
 
-      resultEnvs.push(env);
-      //
-      //     const secretValue = await getSecretValue(
-      //       env.value.replace('sm://', ''),
-      //       baseUrl,
-      //       auth,
-      //     );
-      //
-      //     resultEnvs.push({
-      //       ...env,
-      //       value: secretValue,
-      //     });
+      const secretValue = await getSecretValue(
+        env.value.replace('sm://', ''),
+        baseUrl,
+        auth,
+      );
+
+      resultEnvs.push({
+        ...env,
+        value: secretValue,
+      });
     }
 
     config['d2c-service-config'].env = resultEnvs;
