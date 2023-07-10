@@ -94,6 +94,7 @@ d2c-service-config:
       # - custom - if type = custom, 'file' property is required
       type: fastcgi
       appRoot: /var/www/app/public_a
+      dnsResolver: 172.17.0.1 # default value
 
   # change to the name will result in new service created
   name: test-nginx

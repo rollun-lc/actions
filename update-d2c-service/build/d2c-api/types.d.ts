@@ -79,6 +79,7 @@ export declare type D2CServiceConfig = {
             config?: string;
             type: 'fastcgi' | 'custom';
             file?: string;
+            dnsResolver?: string;
         }[];
     };
 };
