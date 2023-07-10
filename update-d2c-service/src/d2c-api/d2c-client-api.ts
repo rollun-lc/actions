@@ -33,9 +33,11 @@ class D2CBasicClient {
       }
       return config;
     });
-    this.api.interceptors.response.use(undefined,  (error: AxiosError) => {
+    this.api.interceptors.response.use(undefined, (error: AxiosError) => {
       if (error.response?.data) {
-        core.error(error.response?.data.message || JSON.stringify(error.response?.data));
+        core.error(
+          error.response?.data.message || JSON.stringify(error.response?.data),
+        );
       }
       throw error;
     });
@@ -200,7 +202,7 @@ class D2cApiClient extends D2CBasicClient {
       // resolve services name to service id
       const services = config['d2c-service-config'].services || [];
       const resolvedServices = services.map(
-        async ({ name, appRoot, config, type, file }) => {
+        async ({ name, appRoot, config, type, file, dnsResolver }) => {
           const service = await this.fetchServiceByName(name);
           if (!service) {
             throw new Error('no such service ' + name);
@@ -217,7 +219,7 @@ class D2cApiClient extends D2CBasicClient {
             configStr = await renderFile(
               __dirname +
                 `/templates/nginx-${type}-service-proxy.conf.template`,
-              { appRoot },
+              { appRoot, dnsResolver: dnsResolver || '172.17.0.1' },
             );
           }
 
@@ -270,13 +272,16 @@ class D2cApiClient extends D2CBasicClient {
         continue;
       }
 
-      const resolvedValue = castedValue.replaceAll(envVarPattern, (_, envName) => {
-        const envVar = process.env[envName];
-        if (!envVar) {
-          throw new Error(`env var ${envName} not found`);
-        }
-        return envVar;
-      });
+      const resolvedValue = castedValue.replaceAll(
+        envVarPattern,
+        (_, envName) => {
+          const envVar = process.env[envName];
+          if (!envVar) {
+            throw new Error(`env var ${envName} not found`);
+          }
+          return envVar;
+        },
+      );
 
       resolvedEnvs.push({ name, value: resolvedValue });
     }
@@ -360,7 +365,7 @@ class D2cApiClient extends D2CBasicClient {
         core.info('no changes in config, triggering service update');
         await this.triggerServiceUpdate(service.id);
       }
-        await this.awaitServiceAction(service.id);
+      await this.awaitServiceAction(service.id);
     } else {
       const { data } = await this.api.post(`/v1/service/${type}`, payload);
       const serviceId = data.result.id;

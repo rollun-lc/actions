@@ -5,7 +5,7 @@ server {
   server_name $serviceDomains;
   server_tokens off; ## Don't show the nginx version number
   index index.php index.html;
-  resolver 172.17.0.1 valid=60s ipv6=off;
+  resolver <%= dnsResolver %> valid=60s ipv6=off;
   set $backend $serviceName;
   include conf.d/letsencrypt.inc;
   location ~ /\.git {

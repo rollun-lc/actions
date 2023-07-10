@@ -155,7 +155,7 @@ class D2cApiClient extends D2CBasicClient {
         if (type === 'nginx') {
             // resolve services name to service id
             const services = config['d2c-service-config'].services || [];
-            const resolvedServices = services.map(async ({ name, appRoot, config, type, file }) => {
+            const resolvedServices = services.map(async ({ name, appRoot, config, type, file, dnsResolver }) => {
                 const service = await this.fetchServiceByName(name);
                 if (!service) {
                     throw new Error('no such service ' + name);
@@ -169,7 +169,7 @@ class D2cApiClient extends D2CBasicClient {
                 }
                 else {
                     configStr = await (0, ejs_1.renderFile)(__dirname +
-                        `/templates/nginx-${type}-service-proxy.conf.template`, { appRoot });
+                        `/templates/nginx-${type}-service-proxy.conf.template`, { appRoot, dnsResolver: dnsResolver || '172.17.0.1' });
                 }
                 return {
                     id: service.id,
