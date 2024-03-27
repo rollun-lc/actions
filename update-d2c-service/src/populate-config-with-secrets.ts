@@ -1,5 +1,6 @@
 import { D2CServiceConfig } from './d2c-api/types';
 import { getSecretValue } from './get-secret-value';
+import * as core from '@actions/core';
 
 function isSecret(value: string | number) {
   return typeof value === 'string' && value.startsWith('sm://');
@@ -37,6 +38,8 @@ export async function populateConfigWithSecrets(
         continue;
       }
 
+      core.info(`resolving secret ${env.value}...`);
+
       const secretValue = await getSecretValue(
         env.value.replace('sm://', ''),
         baseUrl,
@@ -47,6 +50,8 @@ export async function populateConfigWithSecrets(
         ...env,
         value: secretValue,
       });
+
+      core.info(`secret ${env.value} was correctly resolved.`);
     }
 
     config['d2c-service-config'].env = resultEnvs;
