@@ -55,6 +55,7 @@ d2c-service-config:
   ports:
     - value: 80
       protocol: TCP
+  # Optional Env definition
   env:
     - name: NODE_ENV
       value: production
@@ -66,6 +67,7 @@ d2c-service-config:
     # this syntax will take value by key from secrets datastore - https://rollun.net/api/datastore/Secrets
     - name: SOME_SECRET_VALUE
       value: sm://SOME_SECRET_VALUE
+  # Optional crons definition
   crons:
     - active: true
       name: 'test-cron-1'
@@ -75,7 +77,12 @@ d2c-service-config:
       name: 'test-cron'
       command: 'curl https://google.com'
       time: '* * * * *'
-
+  # Optional persistant volumes definition
+  volumes:
+      # dst can be any path in a container
+    - dst: /var/www/app/container-dir
+      # source dir should start with /ebs/containers/{service-name} to correctly map to docker volumes
+      src: /ebs/containers/catalog-docker/host-dir
 ```
 
 Example nginx service definition config:
