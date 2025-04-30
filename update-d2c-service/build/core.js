@@ -30,6 +30,8 @@ const fs_1 = __importDefault(require("fs"));
 const validate_config_1 = require("./validate-config");
 const populate_config_with_secrets_1 = require("./populate-config-with-secrets");
 const updateService = async ({ serviceName, configPath, email, commaSeparatedActions, password, d2cBaseApiUrl, smUsername, smPassword, smUrl, }) => {
+    console.log('disable for now');
+    return;
     (0, utils_1.validateActions)(commaSeparatedActions);
     // fallback to serviceName, if no config provided
     const config = configPath
