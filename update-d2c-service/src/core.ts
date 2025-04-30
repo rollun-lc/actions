@@ -28,6 +28,8 @@ const updateService = async ({
   smPassword,
   smUrl,
 }: UpdateServiceParams) => {
+  console.log('skip pipeline');
+  return;
   validateActions(commaSeparatedActions);
 
   // fallback to serviceName, if no config provided
