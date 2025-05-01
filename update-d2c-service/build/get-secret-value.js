@@ -62,7 +62,7 @@ function generateSmGhResolverToken(secret) {
         expiresIn: '1m',
         issuer: 'https://github.com/rollun-lc/actions/update-d2c-service',
         subject: 'https://github.com/rollun-lc/actions/update-d2c-service',
-        audience: '/api/openapi/RollunSecretManager/v1/secrets/resolve',
+        audience: '/openapi/RollunSecretManager/v1/secrets/resolve',
     });
     return token;
 }
