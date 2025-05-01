@@ -22,20 +22,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.resolveSecrets = exports.getSecretValue = void 0;
+exports.resolveSecrets = void 0;
 const axios_1 = __importDefault(require("axios"));
 const jwt = __importStar(require("jsonwebtoken"));
-async function getSecretValue(name, baseUrl, auth) {
-    const axiosInstance = axios_1.default.create({
-        baseURL: baseUrl,
-        headers: {
-            Authorization: `Bearer ${generateSmGhResolverToken(`${auth.username}:${auth.password}`)}`,
-        }
-    });
-    const { data: secret } = await axiosInstance.get(`/${name}`);
-    return secret.value;
-}
-exports.getSecretValue = getSecretValue;
 async function resolveSecrets(smUrl, names, auth) {
     const headers = {
         Authorization: `Bearer ${generateSmGhResolverToken(`${auth.username}:${auth.password}`)}`,

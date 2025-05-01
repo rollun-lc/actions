@@ -25,7 +25,7 @@ const core = __importStar(require("@actions/core"));
 function isSecret(value) {
     return typeof value === 'string' && value.startsWith('sm://');
 }
-async function populateConfigWithSecrets(config, auth, smUrl = 'https://sm.rollun.net/api/openapi/RollunSecretManager/v1/secrets/resolve') {
+async function populateConfigWithSecrets(config, auth, smUrl = 'https://sm.rollun.net/openapi/RollunSecretManager/v1/secrets/resolve') {
     const envs = config['d2c-service-config'].env || [];
     if (envs.length === 0) {
         return config;

@@ -14,10 +14,6 @@ export interface ResolvedSecret {
 export interface ResolveSecretsResponse {
     resolved: ResolvedSecret[];
 }
-export declare function getSecretValue(name: string, baseUrl: string, auth: {
-    username: string;
-    password: string;
-}): Promise<string>;
 export declare function resolveSecrets(smUrl: string, names: string[], auth: {
     username: string;
     password: string;

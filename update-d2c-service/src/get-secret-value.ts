@@ -23,29 +23,6 @@ export interface ResolveSecretsResponse {
 }
 
 
-export async function getSecretValue(
-  name: string,
-  baseUrl: string,
-  auth: {
-    username: string;
-    password: string;
-  },
-) {
-  const axiosInstance = axios.create({
-    baseURL: baseUrl,
-    headers: {
-      Authorization: `Bearer ${generateSmGhResolverToken(`${auth.username}:${auth.password}`)}`,
-    }
-  });
-
-  const { data: secret } = await axiosInstance.get<{
-    key: string;
-    value: string;
-  }>(`/${name}`);
-
-  return secret.value;
-}
-
 export async function resolveSecrets(smUrl: string, names: string[], auth: { username: string; password: string }) {
   const headers = {
     Authorization: `Bearer ${generateSmGhResolverToken(`${auth.username}:${auth.password}`)}`,

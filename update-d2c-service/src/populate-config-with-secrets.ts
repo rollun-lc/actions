@@ -1,5 +1,5 @@
 import { D2CServiceConfig } from './d2c-api/types';
-import { getSecretValue, resolveSecrets } from './get-secret-value';
+import { resolveSecrets } from './get-secret-value';
 import * as core from '@actions/core';
 
 function isSecret(value: string | number) {
@@ -9,7 +9,7 @@ function isSecret(value: string | number) {
 export async function populateConfigWithSecrets(
   config: D2CServiceConfig,
   auth: { username?: string; password?: string },
-  smUrl = 'https://sm.rollun.net/api/openapi/RollunSecretManager/v1/secrets/resolve',
+  smUrl = 'https://sm.rollun.net/openapi/RollunSecretManager/v1/secrets/resolve',
 ) {
   const envs = config['d2c-service-config'].env || [];
 
