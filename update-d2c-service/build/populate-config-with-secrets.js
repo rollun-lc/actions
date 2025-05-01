@@ -25,7 +25,7 @@ const core = __importStar(require("@actions/core"));
 function isSecret(value) {
     return typeof value === 'string' && value.startsWith('sm://');
 }
-async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/') {
+async function populateConfigWithSecrets(config, auth, smUrl = 'https://sm.rollun.net/api/openapi/RollunSecretManager/v1/secrets/resolve') {
     const envs = config['d2c-service-config'].env || [];
     if (envs.length === 0) {
         return config;
@@ -40,21 +40,18 @@ async function populateConfigWithSecrets(config, auth, baseUrl = 'https://rollun
         throw new Error('smPassword and smUsername are required');
     }
     try {
-        const resultEnvs = [];
-        for (const env of config['d2c-service-config'].env || []) {
+        core.info(`resolving secrets ${secretsNames.join(', ')}...`);
+        const resolvedSecrets = await (0, get_secret_value_1.resolveSecrets)(smUrl, secretsNames, auth);
+        core.info(`secrets resolved`);
+        envs.forEach((env) => {
             if (!isSecret(env.value)) {
-                resultEnvs.push(env);
-                continue;
+                return;
             }
-            core.info(`resolving secret ${env.value}...`);
-            const secretValue = await (0, get_secret_value_1.getSecretValue)(env.value.replace('sm://', ''), baseUrl, auth);
-            resultEnvs.push({
-                ...env,
-                value: secretValue,
-            });
-            core.info(`secret ${env.value} was correctly resolved.`);
-        }
-        config['d2c-service-config'].env = resultEnvs;
+            const secretName = env.value.replace('sm://', '');
+            const secret = resolvedSecrets.find((secret) => secret.name === secretName);
+            env.value = secret.value;
+        });
+        config['d2c-service-config'].env = envs;
         return config;
     }
     catch (e) {

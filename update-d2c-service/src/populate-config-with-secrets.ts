@@ -1,5 +1,5 @@
 import { D2CServiceConfig } from './d2c-api/types';
-import { getSecretValue } from './get-secret-value';
+import { getSecretValue, resolveSecrets } from './get-secret-value';
 import * as core from '@actions/core';
 
 function isSecret(value: string | number) {
@@ -9,7 +9,7 @@ function isSecret(value: string | number) {
 export async function populateConfigWithSecrets(
   config: D2CServiceConfig,
   auth: { username?: string; password?: string },
-  baseUrl = 'https://rollun.net/api/openapi/RollunSecretManager/v1/secrets/',
+  smUrl = 'https://sm.rollun.net/api/openapi/RollunSecretManager/v1/secrets/resolve',
 ) {
   const envs = config['d2c-service-config'].env || [];
 
@@ -29,32 +29,25 @@ export async function populateConfigWithSecrets(
     throw new Error('smPassword and smUsername are required');
   }
 
-  try {
-    const resultEnvs: { name: string; value: string }[] = [];
 
-    for (const env of config['d2c-service-config'].env || []) {
+  try {
+    core.info(`resolving secrets ${secretsNames.join(', ')}...`);
+    const resolvedSecrets = await resolveSecrets(smUrl, secretsNames, auth as { username: string; password: string });
+    core.info(`secrets resolved`);
+
+    envs.forEach((env) => {
       if (!isSecret(env.value)) {
-        resultEnvs.push(env);
-        continue;
+        return;
       }
 
-      core.info(`resolving secret ${env.value}...`);
+      const secretName = env.value.replace('sm://', '');
+      const secret = resolvedSecrets.find((secret) => secret.name === secretName)!;
+      
+      env.value = secret.value;
+    });
 
-      const secretValue = await getSecretValue(
-        env.value.replace('sm://', ''),
-        baseUrl,
-        auth,
-      );
 
-      resultEnvs.push({
-        ...env,
-        value: secretValue,
-      });
-
-      core.info(`secret ${env.value} was correctly resolved.`);
-    }
-
-    config['d2c-service-config'].env = resultEnvs;
+    config['d2c-service-config'].env = envs;
     return config;
   } catch (e) {
     throw new Error('failed to fetch secrets: ' + (e as Error).message);
